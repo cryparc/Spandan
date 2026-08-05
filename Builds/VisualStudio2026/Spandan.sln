@@ -1,0 +1,46 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio Version 18
+
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Spandan - Standalone Plugin", "Spandan_StandalonePlugin.vcxproj", "{9FF988EF-C192-27A6-4B6F-C85ECF2BDEA1}"
+	ProjectSection(ProjectDependencies) = postProject
+		{FD4F04F9-4B90-7CD4-D1EC-08409AB8E71F} = {FD4F04F9-4B90-7CD4-D1EC-08409AB8E71F}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Spandan - VST3", "Spandan_VST3.vcxproj", "{0F86BB23-BB7C-64B7-0808-6F352A748321}"
+	ProjectSection(ProjectDependencies) = postProject
+		{FD4F04F9-4B90-7CD4-D1EC-08409AB8E71F} = {FD4F04F9-4B90-7CD4-D1EC-08409AB8E71F}
+		{3A4F130A-0F7A-E282-E783-4846A00A33FA} = {3A4F130A-0F7A-E282-E783-4846A00A33FA}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Spandan - Shared Code", "Spandan_SharedCode.vcxproj", "{FD4F04F9-4B90-7CD4-D1EC-08409AB8E71F}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Spandan - VST3 Manifest Helper", "Spandan_VST3ManifestHelper.vcxproj", "{3A4F130A-0F7A-E282-E783-4846A00A33FA}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x64 = Debug|x64
+		Release|x64 = Release|x64
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{0F86BB23-BB7C-64B7-0808-6F352A748321}.Debug|x64.ActiveCfg = Debug|x64
+		{0F86BB23-BB7C-64B7-0808-6F352A748321}.Debug|x64.Build.0 = Debug|x64
+		{0F86BB23-BB7C-64B7-0808-6F352A748321}.Release|x64.ActiveCfg = Release|x64
+		{0F86BB23-BB7C-64B7-0808-6F352A748321}.Release|x64.Build.0 = Release|x64
+		{9FF988EF-C192-27A6-4B6F-C85ECF2BDEA1}.Debug|x64.ActiveCfg = Debug|x64
+		{9FF988EF-C192-27A6-4B6F-C85ECF2BDEA1}.Debug|x64.Build.0 = Debug|x64
+		{9FF988EF-C192-27A6-4B6F-C85ECF2BDEA1}.Release|x64.ActiveCfg = Release|x64
+		{9FF988EF-C192-27A6-4B6F-C85ECF2BDEA1}.Release|x64.Build.0 = Release|x64
+		{FD4F04F9-4B90-7CD4-D1EC-08409AB8E71F}.Debug|x64.ActiveCfg = Debug|x64
+		{FD4F04F9-4B90-7CD4-D1EC-08409AB8E71F}.Debug|x64.Build.0 = Debug|x64
+		{FD4F04F9-4B90-7CD4-D1EC-08409AB8E71F}.Release|x64.ActiveCfg = Release|x64
+		{FD4F04F9-4B90-7CD4-D1EC-08409AB8E71F}.Release|x64.Build.0 = Release|x64
+		{3A4F130A-0F7A-E282-E783-4846A00A33FA}.Debug|x64.ActiveCfg = Debug|Win32
+		{3A4F130A-0F7A-E282-E783-4846A00A33FA}.Debug|x64.Build.0 = Debug|Win32
+		{3A4F130A-0F7A-E282-E783-4846A00A33FA}.Release|x64.ActiveCfg = Release|Win32
+		{3A4F130A-0F7A-E282-E783-4846A00A33FA}.Release|x64.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
