@@ -9,6 +9,7 @@
 #pragma once
 
 #include <JuceHeader.h>
+#include "Oscillator.h"
 
 //==============================================================================
 /**
@@ -54,6 +55,7 @@ public:
     void setStateInformation (const void* data, int sizeInBytes) override;
 
 private:
+    Oscillator osc;
     //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (SpandanAudioProcessor)
 };

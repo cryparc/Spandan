@@ -8,6 +8,7 @@
 
 #include "PluginProcessor.h"
 #include "PluginEditor.h"
+#include "Oscillator.h"
 
 //==============================================================================
 SpandanAudioProcessor::SpandanAudioProcessor()
@@ -93,8 +94,9 @@ void SpandanAudioProcessor::changeProgramName (int index, const juce::String& ne
 //==============================================================================
 void SpandanAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlock)
 {
-    // Use this method as the place to do any pre-playback
-    // initialisation that you need..
+    osc.prepareToPlay(sampleRate);
+    osc.setFrequency(440.0f); // 440 Hz Sine Wave
+    osc.setWaveform(Oscillator::Waveform::Sine);
 }
 
 void SpandanAudioProcessor::releaseResources()
@@ -135,26 +137,24 @@ void SpandanAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce
     auto totalNumInputChannels  = getTotalNumInputChannels();
     auto totalNumOutputChannels = getTotalNumOutputChannels();
 
-    // In case we have more outputs than inputs, this code clears any output
-    // channels that didn't contain input data, (because these aren't
-    // guaranteed to be empty - they may contain garbage).
-    // This is here to avoid people getting screaming feedback
-    // when they first compile a plugin, but obviously you don't need to keep
-    // this code if your algorithm always overwrites all the output channels.
+    // Clear unused output channels
     for (auto i = totalNumInputChannels; i < totalNumOutputChannels; ++i)
         buffer.clear (i, 0, buffer.getNumSamples());
 
-    // This is the place where you'd normally do the guts of your plugin's
-    // audio processing...
-    // Make sure to reset the state if your inner loop is processing
-    // the samples and the outer loop is handling the channels.
-    // Alternatively, you can process the samples with the channels
-    // interleaved by keeping the same state.
-    for (int channel = 0; channel < totalNumInputChannels; ++channel)
-    {
-        auto* channelData = buffer.getWritePointer (channel);
+    // Get write pointers for Left (0) and Right (1) channels
+    auto* leftChannel = buffer.getWritePointer(0);
+    auto* rightChannel = buffer.getWritePointer(1);
 
-        // ..do something to the data...
+    // Process audio sample by sample
+    for (int sample = 0; sample < buffer.getNumSamples(); ++sample)
+    {
+        // Get the mathematical sample from our NCO
+        // Multiply by 0.1f to lower the volume so it doesn't blow out your speakers
+        float currentSample = osc.processSample() * 0.1f;
+
+        // Write the sample to both speakers
+        leftChannel[sample] = currentSample;
+        rightChannel[sample] = currentSample;
     }
 }
 
