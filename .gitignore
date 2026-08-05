@@ -400,3 +400,12 @@ FodyWeavers.xsd
 # JetBrains Rider
 *.sln.iml
 Builds/
+
+# Xcode & macOS Build Folders
+build/
+DerivedData/
+*.xcodeproj/*
+!*.xcodeproj/project.pbxproj
+*.xcworkspace/*
+!*.xcworkspace/contents.xcworkspace
+.DS_Store
