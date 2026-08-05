@@ -24,13 +24,15 @@ public:
     void resetPhase() noexcept;
 
 private:
+    // Use double precision for phase and increments for better numerical stability
     double currentSampleRate { 44100.0 };
-    float targetFrequency { 440.0f };
-    
-    float currentPhase { 0.0f };
-    float phaseIncrement { 0.0f };
+    double targetFrequency { 440.0 };
+
+    double currentPhase { 0.0 };
+    double phaseIncrement { 0.0 };
 
     Waveform currentWaveform { Waveform::Sine };
 
     void updatePhaseIncrement() noexcept;
 };
+

@@ -2,16 +2,19 @@
 
 void Oscillator::prepareToPlay(double sampleRate) noexcept
 {
-    currentSampleRate = sampleRate;
+    currentSampleRate = (sampleRate > 0.0) ? sampleRate : 44100.0;
     resetPhase();
     updatePhaseIncrement();
 }
 
 void Oscillator::setFrequency(float frequencyInHz) noexcept
 {
-    if (targetFrequency != frequencyInHz)
+    if (frequencyInHz < 0.0f)
+        frequencyInHz = 0.0f;
+
+    if (targetFrequency != static_cast<double>(frequencyInHz))
     {
-        targetFrequency = frequencyInHz;
+        targetFrequency = static_cast<double>(frequencyInHz);
         updatePhaseIncrement();
     }
 }
@@ -23,43 +26,49 @@ void Oscillator::setWaveform(Waveform newWaveform) noexcept
 
 void Oscillator::resetPhase() noexcept
 {
-    currentPhase = 0.0f;
+    currentPhase = 0.0;
 }
 
 void Oscillator::updatePhaseIncrement() noexcept
 {
-    phaseIncrement = targetFrequency / static_cast<float>(currentSampleRate);
+    if (currentSampleRate <= 0.0)
+        phaseIncrement = 0.0;
+    else
+        phaseIncrement = targetFrequency / currentSampleRate; // cycles per sample (0..1)
 }
 
 float Oscillator::processSample() noexcept
 {
-    float rawSample = 0.0f;
+    double raw = 0.0;
 
     switch (currentWaveform)
     {
         case Waveform::Sine:
-            rawSample = std::sin(juce::MathConstants<float>::twoPi * currentPhase);
+            raw = std::sin(juce::MathConstants<double>::twoPi * currentPhase);
             break;
 
         case Waveform::Saw:
-            rawSample = (2.0f * currentPhase) - 1.0f;
+            raw = (2.0 * currentPhase) - 1.0;
             break;
 
         case Waveform::Square:
-            rawSample = (currentPhase < 0.5f) ? 1.0f : -1.0f;
+            raw = (currentPhase < 0.5) ? 1.0 : -1.0;
             break;
 
         case Waveform::Triangle:
-            rawSample = 2.0f * std::abs(2.0f * currentPhase - 1.0f) - 1.0f;
+            raw = 2.0 * std::abs(2.0 * currentPhase - 1.0) - 1.0;
             break;
     }
 
     currentPhase += phaseIncrement;
 
-    while (currentPhase >= 1.0f)
+    if (currentPhase >= 1.0 || currentPhase < 0.0)
     {
-        currentPhase -= 1.0f;
+        currentPhase = std::fmod(currentPhase, 1.0);
+        if (currentPhase < 0.0)
+            currentPhase += 1.0;
     }
 
-    return rawSample;
+    return static_cast<float>(raw);
 }
+
