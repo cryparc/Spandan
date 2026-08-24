@@ -120,3 +120,89 @@ code {
     font-family: 'Courier New', Courier, monospace;
     font-weight: bold;
 }
+/* =========================================
+   Floating Action Button (FAB) System
+   ========================================= */
+.fab-container {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    z-index: 1000; /* Keeps it on top of everything */
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+}
+
+.fab-button {
+    background-color: var(--jungle-green);
+    color: #ffffff;
+    border: 2px solid var(--dark-gold);
+    padding: 12px 24px;
+    border-radius: 30px; /* Pill shape */
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: bold;
+    font-size: 1rem;
+    cursor: pointer;
+    box-shadow: 0 4px 15px rgba(46, 139, 87, 0.4);
+    transition: all 0.3s ease;
+}
+
+.fab-button:hover {
+    background-color: var(--deep-forest);
+    box-shadow: 0 6px 20px rgba(184, 134, 11, 0.6);
+    transform: translateY(-2px);
+}
+
+.fab-menu {
+    background: rgba(255, 255, 255, 0.90);
+    backdrop-filter: blur(8px);
+    border: 1px solid var(--jungle-green);
+    border-radius: 12px 12px 4px 12px; /* Cyber-leaf aesthetic */
+    padding: 15px;
+    margin-bottom: 15px;
+    box-shadow: 0 10px 30px rgba(30, 86, 49, 0.2);
+    display: flex;
+    flex-direction: column;
+    min-width: 200px;
+    
+    /* Animation settings */
+    visibility: hidden;
+    opacity: 0;
+    transform: translateY(15px);
+    transition: opacity 0.3s ease, transform 0.3s ease, visibility 0.3s;
+}
+
+/* This class is activated by the JavaScript */
+.fab-menu.active {
+    visibility: visible;
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.fab-header {
+    font-family: 'Rajdhani', sans-serif;
+    color: var(--deep-forest);
+    font-size: 1.2rem;
+    font-weight: bold;
+    text-align: center;
+    border-bottom: 1px dashed var(--jungle-green);
+    padding-bottom: 5px;
+    margin-bottom: 10px;
+}
+
+.fab-item {
+    color: var(--earthy-brown);
+    padding: 10px;
+    margin: 4px 0;
+    border-radius: 6px;
+    font-weight: 600;
+    font-size: 0.95rem;
+    transition: background 0.2s ease, color 0.2s ease;
+}
+
+.fab-item:hover {
+    background: rgba(46, 139, 87, 0.15);
+    color: var(--deep-forest);
+    text-decoration: none;
+    text-shadow: none;
+}

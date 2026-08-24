@@ -24,5 +24,31 @@
         </main>
 
     </div>
+    <!-- Floating Action Button System -->
+        <div class="fab-container">
+            <div class="fab-menu" id="fabMenu">
+                <div class="fab-header">Stay Updated</div>
+                <!-- GitHub Link (Goes to the commits page to see latest updates) -->
+                <a href="https://github.com/cryparc/Spandan/commits/main" target="_blank" class="fab-item">
+                    💻 GitHub Repo
+                </a>
+                <!-- LinkedIn Links (Replace the # with your actual profile URLs) -->
+                <a href="#" target="_blank" class="fab-item">
+                    🔗 Prashant's LinkedIn
+                </a>
+                <a href="#" target="_blank" class="fab-item">
+                    🔗 Parth's LinkedIn
+                </a>
+            </div>
+            <button class="fab-button" onclick="toggleFab()">See Latest Updates</button>
+        </div>
+
+        <!-- Tiny script to toggle the popup menu -->
+        <script>
+            function toggleFab() {
+                const menu = document.getElementById('fabMenu');
+                menu.classList.toggle('active');
+            }
+        </script>
 </body>
 </html>
