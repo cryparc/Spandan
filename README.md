@@ -6,28 +6,31 @@
 ![License](https://img.shields.io/badge/License-GPLv3-green?style=for-the-badge)
 ![Platform](https://img.shields.io/badge/Platform-Windows%20%7C%20macOS%20%7C%20VST3%20%7C%20AU%20%7C%20Standalone-lightgrey?style=for-the-badge)
 
-## 📌 Overview
-**SPANDAN** is a strictly deterministic, low-latency Digital Signal Processing (DSP) audio engine built natively in C++ using the latest JUCE 9 hardware abstraction framework[cite: 2]. 
+> ### 📖 [Read the Official SPANDAN Engineering Textbook & DSP Blog](https://cryparc.github.io/Spandan/)
+> **We are building in public.** Curious about the core telecommunications mathematics and C++ implementations powering this engine? Dive into our chapter-by-chapter technical documentation, starting with the heart of the engine: the Numerically Controlled Oscillator (NCO). 
 
-Unlike standard commercial tools that rely heavily on CPU-intensive sample playback, SPANDAN bypasses conventional architecture by generating baseband signals mathematically via discrete-time phase accumulation[cite: 2]. It is engineered to translate core telecommunications mathematics into a highly optimized, real-time software environment suitable for baseline CPU architectures[cite: 2].
+## 📌 Overview
+**SPANDAN** is a strictly deterministic, low-latency Digital Signal Processing (DSP) audio engine built natively in C++ using the latest JUCE 9 hardware abstraction framework. 
+
+Unlike standard commercial tools that rely heavily on CPU-intensive sample playback, SPANDAN bypasses conventional architecture by generating baseband signals mathematically via discrete-time phase accumulation. It is engineered to translate core telecommunications mathematics into a highly optimized, real-time software environment suitable for baseline CPU architectures.
 
 ## ⚙️ Core DSP Architecture
-The engine executes its entire mathematical pipeline within the high-priority audio callback thread (at a 44.1 kHz sample rate) with zero dynamic memory allocation (`new`/`malloc`), guaranteeing microsecond-level execution without buffer underruns[cite: 2].
+The engine executes its entire mathematical pipeline within the high-priority audio callback thread (at a 44.1 kHz sample rate) with zero dynamic memory allocation (`new`/`malloc`), guaranteeing microsecond-level execution without buffer underruns.
 
-*   **Numerically Controlled Oscillators (NCO):** Mathematical phase accumulators for baseband signal generation[cite: 2].
-*   **Frequency Modulation (FM) Synthesis:** Advanced modulation matrix where $f_m$ (modulator) alters the phase of $f_c$ (carrier) to generate complex harmonic sidebands[cite: 2].
-*   **Algorithmic Voice Stealing & Polyphony:** A thread-safe dynamic voice allocation system that manages concurrent DSP instances and intelligently reassigns hardware computing threads when polyphony limits are exceeded[cite: 2].
-*   **Infinite Impulse Response (IIR) Filters:** Custom discrete digital state-variable filter cascades for frequency spectrum shaping[cite: 2].
-*   **Real-Time Spectral Analytics:** Integrated Radix-2 Fast Fourier Transform (FFT) algorithms featuring Hann windowing to prevent spectral leakage, rendering visual diagnostics at 60 FPS on the UI thread[cite: 2].
+*   **Numerically Controlled Oscillators (NCO):** Mathematical phase accumulators for baseband signal generation.
+*   **Frequency Modulation (FM) Synthesis:** Advanced modulation matrix where $f_m$ (modulator) alters the phase of $f_c$ (carrier) to generate complex harmonic sidebands.
+*   **Algorithmic Voice Stealing & Polyphony:** A thread-safe dynamic voice allocation system that manages concurrent DSP instances and intelligently reassigns hardware computing threads when polyphony limits are exceeded.
+*   **Infinite Impulse Response (IIR) Filters:** Custom discrete digital state-variable filter cascades for frequency spectrum shaping.
+*   **Real-Time Spectral Analytics:** Integrated Radix-2 Fast Fourier Transform (FFT) algorithms featuring Hann windowing to prevent spectral leakage, rendering visual diagnostics at 60 FPS on the UI thread.
 
 ## 🛠️ Tech Stack & Target Platforms
-*   **Language:** C++23 / C++26 (Deterministic O(1) algorithmic execution, leveraging modern constexpr and vectorization)[cite: 2].
-*   **DSP Framework:** JUCE 9 (`juce_audio_processors`, `juce_dsp`)[cite: 2].
+*   **Language:** C++23 / C++26 (Deterministic O(1) algorithmic execution, leveraging modern constexpr and vectorization).
+*   **DSP Framework:** JUCE 9 (`juce_audio_processors`, `juce_dsp`).
 *   **Primary IDE & Compiler:** MSVC (Visual Studio 2026) / LLVM.
 *   **Target Plugin Formats:** 
-    *   **VST3** (Cross-platform digital audio workstation plugin)[cite: 2]
+    *   **VST3** (Cross-platform digital audio workstation plugin)
     *   **AU (Audio Unit)** (macOS native audio processing standard)
-    *   **Standalone** (Executable binary without host DAW requirement)[cite: 2]
+    *   **Standalone** (Executable binary without host DAW requirement)
 
 ## 🚀 Build Instructions
 To compile the DSP engine locally from the source code:
