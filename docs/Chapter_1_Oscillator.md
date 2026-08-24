@@ -1,3 +1,6 @@
+---
+layout: default
+---
 There are mainly two types of oscillators based on their underlying architecture:
 
 1. **Electronic Oscillator (Analog):** Operates entirely in the analog domain using physical components to generate continuous waveforms. It is mostly used in **power supplies, clock generators for ICs (Integrated Circuits), RF transmitters, and core electronics applications**.

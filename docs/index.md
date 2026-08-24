@@ -1,3 +1,6 @@
+---
+layout: default
+---
 # SPANDAN: Audio DSP Engineering Blog
 
 Welcome to the official documentation and development blog for Project SPANDAN. Here, we break down the telecommunications mathematics and C++ implementation of our real-time polyphonic synthesizer.
