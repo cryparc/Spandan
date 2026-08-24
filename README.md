@@ -43,6 +43,59 @@ To compile the DSP engine locally from the source code:
 
 *(Note: The compiled `.vst3`, `.component` (AU), and Standalone binaries are explicitly ignored in this repository to preserve source integrity. You must compile the binaries locally.)*
 
+## 🤝 Contributing & Git Cheat Sheet
+
+Whether you are a beginner looking to compile the C++ engine locally, or a contributor ready to submit DSP patches, here are the exact commands you need. You can copy and paste these directly into your terminal.
+
+### 1. First-Time Setup (Clone the Repo)
+To download the entire project to your local machine, open your terminal (or VS Code) and run:
+
+```bash
+# Clone the repository
+git clone [https://github.com/cryparc/Spandan.git](https://github.com/cryparc/Spandan.git)
+
+# Navigate into the project folder
+cd Spandan
+```
+
+### 2. Daily Workflow (Syncing & Pushing)
+If you are actively modifying the code, use this standard workflow to keep everything synced:
+```bash
+# Step 1: Always download the latest updates before starting work
+git pull origin main
+
+# Step 2: Stage all your modified files
+git add .
+
+# Step 3: Commit your changes with a descriptive message
+git commit -m "Brief description of what you changed"
+
+# Step 4: Push the updates back to GitHub
+git push origin main
+```
+
+### 3. Collaboration (Branches & Pull Requests)
+If you are adding a new feature (like a new filter or GUI element) or fixing a bug, please do it on a separate branch so it can be reviewed cleanly.
+
+Creating and pushing a new feature branch:
+```bash
+# Create and switch to a new branch (name it something relevant)
+git checkout -b feature-new-filter
+
+# Stage and commit your changes (same as Step 2 & 3 above)
+git add .
+git commit -m "Added a new state-variable filter"
+
+# Push the new branch to GitHub for the first time
+git push -u origin feature-new-filter
+```
+
+Creating a Pull Request (PR):
+Once you push your new branch to GitHub using the command above, navigate to the Spandan GitHub Repository in your web browser. You will see a green "Compare & pull request" button at the top of the page. Click it to submit your code for review!
+
+Reporting a Bug or Requesting a Feature:
+If you find a bug, experience a buffer underrun, or want to suggest a new DSP feature, please Open an Issue. Provide as much detail as possible, including your OS and DAW host.
+
 ## 📄 License
 This project is licensed under the **GNU General Public License v3.0**. See the `LICENSE` file for more details. 
 *Engineered by Prashant Singh.*
