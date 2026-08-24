@@ -3,13 +3,26 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SPANDAN DSP Blog</title>
+    <title>SPANDAN (स्पंदन) - Cyber-Jungle DSP</title>
+    <!-- Importing Sci-Fi/Tech fonts to match the Cyber vibe -->
+    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;700&family=Space+Grotesk:wght@400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{{ '/assets/css/style.css' | relative_url }}">
 </head>
 <body>
-    <div class="container">
-        <!-- This tag injects your Markdown content exactly here -->
-        {{ content }} 
+    <div class="plugin-window">
+        
+        <!-- Custom LookAndFeel Header -->
+        <header class="plugin-header">
+            <h1 class="main-title">SPANDAN (स्पंदन)</h1>
+            <h2 class="sub-title">Advanced Real-Time Polyphonic Synthesizer</h2>
+            <div class="author-tag">By Prashant Singh</div>
+        </header>
+
+        <!-- Markdown Content Injected Here -->
+        <main class="content-area">
+            {{ content }} 
+        </main>
+
     </div>
 </body>
 </html>
