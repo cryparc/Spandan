@@ -39,24 +39,25 @@ void Oscillator::updatePhaseIncrement() noexcept
 
 float Oscillator::processSample() noexcept
 {
-    double raw = 0.0;
+    const auto phase = static_cast<float>(currentPhase);
+    float raw = 0.0f;
 
     switch (currentWaveform)
     {
         case Waveform::Sine:
-            raw = std::sin(juce::MathConstants<double>::twoPi * currentPhase);
+            raw = std::sin(juce::MathConstants<float>::twoPi * phase);
             break;
 
         case Waveform::Saw:
-            raw = (2.0 * currentPhase) - 1.0;
+            raw = (2.0f * phase) - 1.0f;
             break;
 
         case Waveform::Square:
-            raw = (currentPhase < 0.5) ? 1.0 : -1.0;
+            raw = (phase < 0.5f) ? 1.0f : -1.0f;
             break;
 
         case Waveform::Triangle:
-            raw = 2.0 * std::abs(2.0 * currentPhase - 1.0) - 1.0;
+            raw = 2.0f * std::abs(2.0f * phase - 1.0f) - 1.0f;
             break;
     }
 
@@ -69,6 +70,5 @@ float Oscillator::processSample() noexcept
             currentPhase += 1.0;
     }
 
-    return static_cast<float>(raw);
+    return raw;
 }
-
