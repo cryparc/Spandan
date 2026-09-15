@@ -1,20 +1,12 @@
-title: SPANDAN (स्पंदन)
-description: An Advanced Real-Time Polyphonic Synthesizer & C++ DSP Engine
-   # Enable built-in kramdown math rendering
+title: "SPANDAN (स्पंदन)"
+description: "An Advanced Real-Time Polyphonic Synthesizer & C++ DSP Engine"
+
+   # built-in kramdown math rendering
    kramdown:
      math_engine: mathjax
      math_engine_opts:
        preview: true
        preview_as_code: true
-
-   # Optional: force MathJax CDN globally if your theme doesn't load it automatically
+   #forcing it if it somehow breaks
    mathjax:
      src: https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js
- ```
-
- Important GitHub Pages note: GitHub’s hosted build for github.io sites supports the kramdown math engine, but it does not allow arbitrary Jekyll plugins.
- If the snippet above doesn’t render equations after rebuilding, the safest approach is to add MathJax directly in your HTML layout’s <head> instead of
- relying on _config.yml:
-
- ```html
-   <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
