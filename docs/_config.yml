@@ -1,12 +1,12 @@
 title: "SPANDAN (स्पंदन)"
 description: "An Advanced Real-Time Polyphonic Synthesizer & C++ DSP Engine"
 
-   # built-in kramdown math rendering
-   kramdown:
-     math_engine: mathjax
-     math_engine_opts:
-       preview: true
-       preview_as_code: true
-   #forcing it if it somehow breaks
-   mathjax:
-     src: https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js
+# built-in kramdown math rendering
+kramdown:
+  math_engine: mathjax
+  math_engine_opts:
+    preview: true
+    preview_as_code: true
+# forcing it if it somehow breaks
+mathjax:
+  src: https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js
