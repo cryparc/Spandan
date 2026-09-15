@@ -8,3 +8,7 @@ Welcome to the official documentation and development blog for Project SPANDAN. 
 ### Table of Contents
 
 * [Chapter 1: The Heartbeat of Sound - Numerically Controlled Oscillator (NCO)](Chapter_1_Oscillator.md)
+
+##### Optional DSP Stuff
+
+* [One Pole Recursive Filter](one-pole-recursive-filter.md)
