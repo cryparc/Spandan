@@ -414,7 +414,3 @@ function onePole(x) {
 - Wikipedia: Exponential smoothing and Digital filter.
 
 ---
-
-## Publishing Note
-
-This file is ready for GitHub Pages. If your site uses MathJax, set `mathjax: true` in `_config.yml` or include the MathJax script in your layout so the equations render correctly.
