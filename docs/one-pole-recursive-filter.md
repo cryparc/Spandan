@@ -13,8 +13,6 @@ tags: [signal processing, DSP, filters, recursive filters, exponential smoothing
 
 The **one-pole recursive filter** is the simplest stable Infinite Impulse Response (IIR) filter. It is commonly called an **exponential moving average (EMA)**, a **leaky integrator**, or a **first-order low-pass filter**.
 
-This guide explains the mathematics, intuition, frequency-domain behavior, and practical implementations of this filter in a form suitable for publishing on GitHub Pages.
-
 ---
 
 ## Table of Contents
