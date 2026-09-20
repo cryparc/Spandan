@@ -8,7 +8,6 @@
 
 #include "PluginProcessor.h"
 #include "PluginEditor.h"
-#include "Oscillator.h"
 
 //==============================================================================
 SpandanAudioProcessor::SpandanAudioProcessor()
@@ -69,8 +68,7 @@ double SpandanAudioProcessor::getTailLengthSeconds() const
 
 int SpandanAudioProcessor::getNumPrograms()
 {
-    return 1;   // NB: some hosts don't cope very well if you tell them there are 0 programs,
-                // so this should be at least 1, even if you're not really implementing programs.
+    return 1;
 }
 
 int SpandanAudioProcessor::getCurrentProgram()
@@ -94,15 +92,22 @@ void SpandanAudioProcessor::changeProgramName (int index, const juce::String& ne
 //==============================================================================
 void SpandanAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlock)
 {
-    osc.prepareToPlay(sampleRate);
-    osc.setFrequency(440.0f); // 440 Hz Sine Wave
-    osc.setWaveform(Oscillator::Waveform::Sine);
+	juce::ignoreUnused (samplesPerBlock);
+
+	osc.prepareToPlay(sampleRate);
+	osc.setFrequency(440.0f);
+	osc.setWaveform(Oscillator::Waveform::Sine);
+
+	adsrEnvelope.setSampleRate(sampleRate);
+	adsrEnvelope.setAttackTime(0.05f);
+	adsrEnvelope.setDecayTime(0.2f);
+	adsrEnvelope.setReleaseTime(0.5f);
+	adsrEnvelope.setSustainLevel(0.7f);
+	adsrEnvelope.gate(true);
 }
 
 void SpandanAudioProcessor::releaseResources()
 {
-    // When playback stops, you can use this as an opportunity to free up any
-    // spare memory, etc.
 }
 
 #ifndef JucePlugin_PreferredChannelConfigurations
@@ -112,15 +117,10 @@ bool SpandanAudioProcessor::isBusesLayoutSupported (const BusesLayout& layouts) 
     juce::ignoreUnused (layouts);
     return true;
   #else
-    // This is the place where you check if the layout is supported.
-    // In this template code we only support mono or stereo.
-    // Some plugin hosts, such as certain GarageBand versions, will only
-    // load plugins that support stereo bus layouts.
     if (layouts.getMainOutputChannelSet() != juce::AudioChannelSet::mono()
      && layouts.getMainOutputChannelSet() != juce::AudioChannelSet::stereo())
         return false;
 
-    // This checks if the input layout matches the output layout
    #if ! JucePlugin_IsSynth
     if (layouts.getMainOutputChannelSet() != layouts.getMainInputChannelSet())
         return false;
@@ -134,34 +134,31 @@ bool SpandanAudioProcessor::isBusesLayoutSupported (const BusesLayout& layouts) 
 void SpandanAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce::MidiBuffer& midiMessages)
 {
     juce::ScopedNoDenormals noDenormals;
-    auto totalNumInputChannels  = getTotalNumInputChannels();
-    auto totalNumOutputChannels = getTotalNumOutputChannels();
+    juce::ignoreUnused (midiMessages);
 
-    // Clear unused output channels
-    for (auto i = totalNumInputChannels; i < totalNumOutputChannels; ++i)
-        buffer.clear (i, 0, buffer.getNumSamples());
+    const auto totalNumOutputChannels = getTotalNumOutputChannels();
+    const auto totalNumInputChannels = getTotalNumInputChannels();
+    const auto numSamples = buffer.getNumSamples();
 
-    // Get write pointers for Left (0) and Right (1) channels
-    auto* leftChannel = buffer.getWritePointer(0);
-    auto* rightChannel = buffer.getWritePointer(1);
+    for (auto channel = totalNumInputChannels; channel < totalNumOutputChannels; ++channel)
+        buffer.clear (channel, 0, numSamples);
 
-    // Process audio sample by sample
-    for (int sample = 0; sample < buffer.getNumSamples(); ++sample)
+    const auto numChannels = buffer.getNumChannels();
+
+    for (int sample = 0; sample < numSamples; ++sample)
     {
-        // Get the mathematical sample from our NCO
-        // Multiply by 0.1f to lower the volume so it doesn't blow out your speakers
-        float currentSample = osc.processSample() * 0.1f;
+        const float envelopeValue = adsrEnvelope.process();
+        const float currentSample = osc.processSample() * envelopeValue * 0.1f;
 
-        // Write the sample to both speakers
-        leftChannel[sample] = currentSample;
-        rightChannel[sample] = currentSample;
+        for (int channel = 0; channel < numChannels; ++channel)
+            buffer.setSample(channel, sample, currentSample);
     }
 }
 
 //==============================================================================
 bool SpandanAudioProcessor::hasEditor() const
 {
-    return true; // (change this to false if you choose to not supply an editor)
+    return true;
 }
 
 juce::AudioProcessorEditor* SpandanAudioProcessor::createEditor()

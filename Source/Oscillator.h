@@ -24,7 +24,6 @@ public:
     void resetPhase() noexcept;
 
 private:
-    // Use double precision for phase and increments for better numerical stability
     double currentSampleRate { 44100.0 };
     double targetFrequency { 440.0 };
 

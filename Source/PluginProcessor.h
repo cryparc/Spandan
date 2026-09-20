@@ -10,6 +10,7 @@
 
 #include <JuceHeader.h>
 #include "Oscillator.h"
+#include "ADSR.h"
 
 //==============================================================================
 /**
@@ -56,6 +57,8 @@ public:
 
 private:
     Oscillator osc;
+    ADSR adsrEnvelope;
+
     //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (SpandanAudioProcessor)
 };

@@ -34,7 +34,7 @@ void Oscillator::updatePhaseIncrement() noexcept
     if (currentSampleRate <= 0.0)
         phaseIncrement = 0.0;
     else
-        phaseIncrement = targetFrequency / currentSampleRate; // cycles per sample (0..1)
+        phaseIncrement = targetFrequency / currentSampleRate;
 }
 
 float Oscillator::processSample() noexcept
