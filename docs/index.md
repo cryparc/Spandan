@@ -8,6 +8,7 @@ Welcome to the official documentation and development blog for Project SPANDAN. 
 ### Table of Contents
 
 * [Chapter 1: The Heartbeat of Sound - Numerically Controlled Oscillator (NCO)](Chapter_1_Oscillator.md)
+* [Chapter 2: The Sculpture of Time – Analog-Modeled ADSR Envelopes](Chapter_2_ADSR_Envelope.md)
 
 ##### Optional DSP Stuff
 
