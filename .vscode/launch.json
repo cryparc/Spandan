@@ -1,0 +1,30 @@
+{ 
+    "version": "0.2.0", 
+    "configurations": 
+    [ 
+        { 
+            "name": "Debug SPANDAN (Standalone)", 
+            "type": "cppvsdbg", 
+            "request": "launch", 
+            "program": "D:/PROJECTS/JuceProjects/Spandan/Builds/VisualStudio2026/x64/Debug/Standalone Plugin/SPANDAN.exe", 
+            "args": [], 
+            "stopAtEntry": false, 
+            "cwd": "${workspaceFolder}", 
+            "environment": [], 
+            "console": "integratedTerminal", 
+            "preLaunchTask": "Build SPANDAN (Standalone)" 
+        }, 
+        
+        { 
+            "name": "Debug VST3 in DAW (FL Studio / Host)", 
+            "type": "cppvsdbg", 
+            "request": "launch", 
+            "program": "C:/Program Files/Image-Line/FL Studio 2026/FL64.exe", 
+            "args": [], 
+            "stopAtEntry": false, 
+            "cwd": "${workspaceFolder}", 
+            "environment": [], 
+            "console": "integratedTerminal" 
+        } 
+    ] 
+}

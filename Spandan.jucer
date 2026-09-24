@@ -5,7 +5,6 @@
               bundleIdentifier="com.cryparc.spandan" companyWebsite="https://www.linkedin.com/in/cryparc"
               pluginCharacteristicsValue="pluginIsSynth,pluginWantsMidiIn">
   <MAINGROUP id="VBkeDM" name="Spandan">
-    <GROUP id="{247DCED6-BBD8-1372-4A3D-F308BFD57B37}" name="Source"/>
     <GROUP id="{F20AFA3B-1A14-6B11-0BA0-1650B659C76B}" name="Source">
       <FILE id="pPxvZD" name="ADSR.cpp" compile="1" resource="0" file="Source/ADSR.cpp"/>
       <FILE id="tr18F0" name="ADSR.h" compile="0" resource="0" file="Source/ADSR.h"/>
