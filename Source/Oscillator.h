@@ -8,7 +8,7 @@ class Oscillator
 public:
     enum class Waveform
     {
-        Sine,
+        Sine=0,
         Saw,
         Square,
         Triangle

@@ -19,11 +19,15 @@ SpandanAudioProcessor::SpandanAudioProcessor()
                       #endif
                        .withOutput ("Output", juce::AudioChannelSet::stereo(), true)
                      #endif
-                       )
+                       ),
+                       apvts (*this, nullptr, "Parameters", createParameterLayout())
+
 #endif
 {
+
 }
 
+//==============================================================================
 SpandanAudioProcessor::~SpandanAudioProcessor()
 {
 }
@@ -131,6 +135,21 @@ bool SpandanAudioProcessor::isBusesLayoutSupported (const BusesLayout& layouts) 
 }
 #endif
 
+//==============================================================================
+juce::AudioProcessorValueTreeState::ParameterLayout SpandanAudioProcessor::createParameterLayout() 
+{ 
+    juce::AudioProcessorValueTreeState::ParameterLayout layout; 
+ 
+    layout.add (std::make_unique<juce::AudioParameterChoice> (
+        juce::ParameterID { "WAVEFORM", 1 },
+        "Waveform",
+        juce::StringArray { "Sine", "Sawtooth", "Square", "Triangle" },
+        0 // Default: Sine
+        ));
+    return layout;
+}
+
+//==============================================================================
 void SpandanAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce::MidiBuffer& midiMessages)
 {
     juce::ScopedNoDenormals noDenormals;
@@ -138,12 +157,16 @@ void SpandanAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce
 
     const auto totalNumOutputChannels = getTotalNumOutputChannels();
     const auto totalNumInputChannels = getTotalNumInputChannels();
+
+    auto waveformChoice = static_cast<int> (apvts.getRawParameterValue ("WAVEFORM")->load());
+    osc.setWaveform (static_cast<Oscillator::Waveform> (waveformChoice));
+
     const auto numSamples = buffer.getNumSamples();
+    const auto numChannels = buffer.getNumChannels();
+
 
     for (auto channel = totalNumInputChannels; channel < totalNumOutputChannels; ++channel)
         buffer.clear (channel, 0, numSamples);
-
-    const auto numChannels = buffer.getNumChannels();
 
     for (int sample = 0; sample < numSamples; ++sample)
     {
