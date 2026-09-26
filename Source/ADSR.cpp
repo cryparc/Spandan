@@ -13,7 +13,7 @@ ADSR::ADSR() noexcept
 
 void ADSR::setSampleRate(double newSampleRate) noexcept
 {
-    if (newSampleRate &gt; 0.0 &amp;&amp; sampleRate != newSampleRate)
+    if (newSampleRate > 0.0 && sampleRate != newSampleRate)
     {
         sampleRate = newSampleRate;
         setAttackTime(attackTimeInSeconds);
