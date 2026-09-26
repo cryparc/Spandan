@@ -24,8 +24,8 @@ void ADSR::setSampleRate(double newSampleRate) noexcept
 
 void ADSR::reset() noexcept
 {
-	state = env_idle;
-	output = 0.0f;
+    state = env_idle;
+    output = 0.0f;
 }
 
 float ADSR::calcCoef(float rate, float targetRatio) const noexcept

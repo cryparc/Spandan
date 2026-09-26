@@ -108,6 +108,8 @@ void SpandanAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBloc
 	adsrEnvelope.setReleaseTime(0.5f);
 	adsrEnvelope.setSustainLevel(0.7f);
 	adsrEnvelope.gate(true);
+
+    adsrEnvelope.reset();
 }
 
 void SpandanAudioProcessor::releaseResources()
@@ -153,7 +155,8 @@ juce::AudioProcessorValueTreeState::ParameterLayout SpandanAudioProcessor::creat
 void SpandanAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce::MidiBuffer& midiMessages)
 {
     juce::ScopedNoDenormals noDenormals;
-    juce::ignoreUnused (midiMessages);
+
+    keyboardState.processNextMidiBuffer (midiMessages, 0, buffer.getNumSamples(), true);
 
     const auto totalNumOutputChannels = getTotalNumOutputChannels();
     const auto totalNumInputChannels = getTotalNumInputChannels();
@@ -164,6 +167,22 @@ void SpandanAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce
     const auto numSamples = buffer.getNumSamples();
     const auto numChannels = buffer.getNumChannels();
 
+    for (const auto metadata : midiMessages)
+    {
+        const auto msg = metadata.getMessage();
+        if (msg.isNoteOn(true))
+        {
+            const int noteNumber = msg.getNoteNumber();
+            const float frequency = 440.0f * std::pow (2.0f, (noteNumber - 69) / 12.0f);
+
+            osc.setFrequency (frequency);
+            adsrEnvelope.gate (true);
+        }
+        else if (msg.isNoteOff())
+        {
+            adsrEnvelope.gate (false);
+        }
+    }
 
     for (auto channel = totalNumInputChannels; channel < totalNumOutputChannels; ++channel)
         buffer.clear (channel, 0, numSamples);
@@ -176,6 +195,36 @@ void SpandanAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce
         for (int channel = 0; channel < numChannels; ++channel)
             buffer.setSample(channel, sample, currentSample);
     }
+
+    //Message output for midi input & log
+    for (const auto metadata : midiMessages)
+    {
+        const auto msg = metadata.getMessage();
+
+        if (msg.isNoteOn (true))
+        {
+            DBG ("MIDI Note On: " << msg.getNoteNumber() << " Velocity: " << msg.getVelocity());
+            
+            const int noteNumber = msg.getNoteNumber();
+            const float frequency = 440.0f * std::pow (2.0f, (noteNumber - 69) / 12.0f);
+
+            osc.setFrequency (frequency);
+            adsrEnvelope.gate (true);
+        }
+        else if (msg.isNoteOff() || (msg.isNoteOn() && msg.getVelocity() == 0))
+        {
+            DBG ("MIDI Note Off: " << msg.getNoteNumber());
+            adsrEnvelope.gate (false);
+        }
+    }
+
+    //Message output for keyboard midi input
+    for (const auto metadata : midiMessages)
+    {
+        const auto msg = metadata.getMessage();
+        DBG ("MIDI Received: " << msg.getDescription());
+    }
+
 }
 
 //==============================================================================

@@ -17,7 +17,10 @@
 */
 class SpandanAudioProcessor  : public juce::AudioProcessor
 {
-public:
+  public:
+
+    juce::MidiKeyboardState keyboardState;
+
     //==============================================================================
     SpandanAudioProcessor();
     ~SpandanAudioProcessor() override;
@@ -58,7 +61,7 @@ public:
     //==============================================================================
     juce::AudioProcessorValueTreeState apvts;
 
-private:
+  private:
     Oscillator osc;
     ADSR adsrEnvelope;
     
