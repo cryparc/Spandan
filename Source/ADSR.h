@@ -35,35 +35,41 @@ public:
 	bool isActive() const noexcept { return state != env_idle; }
 
 private:
-	enum envState
-	{
-		env_idle = 0,
-		env_attack,
-		env_decay,
-		env_sustain,
-		env_release
-	};
+    enum envState
+    {
+        env_idle = 0,
+        env_attack,
+        env_decay,
+        env_sustain,
+        env_release
+    };
 
-	void updateBaseMultipliers() noexcept;
-	float calcCoef(float rate, float targetRatio) const noexcept;
+    void updateBaseMultipliers() noexcept;
+    float calcCoef(float rate, float targetRatio) const noexcept;
 
-	int state { env_idle };
-	float output { 0.0f };
+    int state { env_idle };
+    float output { 0.0f };
 
-	double sampleRate { 44100.0 };
-	float attackRate { 0.0f };
-	float decayRate { 0.0f };
-	float releaseRate { 0.0f };
+    double sampleRate { 44100.0 };
 
-	float attackCoef { 0.0f };
-	float decayCoef { 0.0f };
-	float releaseCoef { 0.0f };
+    // Stored in seconds
+    float attackTimeInSeconds { 0.01f };
+    float decayTimeInSeconds { 0.1f };
+    float releaseTimeInSeconds { 0.2f };
 
-	float sustainLevel { 1.0f };
-	float targetRatioA { 0.3f };
-	float targetRatioDR { 0.0001f };
+    // Stored in samples (calculated based on sample rate)
+    float attackRate { 0.0f };
+    float decayRate { 0.0f };
+    float releaseRate { 0.0f };
 
-	float attackBase { 0.0f };
-	float decayBase { 0.0f };
-	float releaseBase { 0.0f };
-};
+    float attackCoef { 0.0f };
+    float decayCoef { 0.0f };
+    float releaseCoef { 0.0f };
+
+    float sustainLevel { 1.0f };
+    float targetRatioA { 0.3f };
+    float targetRatioDR { 0.0001f };
+
+    float attackBase { 0.0f };
+    float decayBase { 0.0f };
+    float releaseBase { 0.0f };

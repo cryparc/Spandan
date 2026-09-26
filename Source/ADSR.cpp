@@ -13,13 +13,13 @@ ADSR::ADSR() noexcept
 
 void ADSR::setSampleRate(double newSampleRate) noexcept
 {
-	if (newSampleRate > 0.0 && sampleRate != newSampleRate)
-	{
-		sampleRate = newSampleRate;
-		setAttackTime(attackRate / static_cast<float>(sampleRate));
-		setDecayTime(decayRate / static_cast<float>(sampleRate));
-		setReleaseTime(releaseRate / static_cast<float>(sampleRate));
-	}
+    if (newSampleRate &gt; 0.0 &amp;&amp; sampleRate != newSampleRate)
+    {
+        sampleRate = newSampleRate;
+        setAttackTime(attackTimeInSeconds);
+        setDecayTime(decayTimeInSeconds);
+        setReleaseTime(releaseTimeInSeconds);
+    }
 }
 
 void ADSR::reset() noexcept
@@ -45,17 +45,20 @@ void ADSR::updateBaseMultipliers() noexcept
 
 void ADSR::setAttackTime(float timeInSeconds) noexcept
 {
-	setAttackRate(std::max(0.0f, timeInSeconds * static_cast<float>(sampleRate)));
-}
-
-void ADSR::setDecayTime(float timeInSeconds) noexcept
-{
-	setDecayRate(std::max(0.0f, timeInSeconds * static_cast<float>(sampleRate)));
+	attackTimeInSeconds = std::max(0.0f, timeInSeconds);
+	setAttackRate(attackTimeInSeconds * static_cast<float>(sampleRate));
 }
 
 void ADSR::setReleaseTime(float timeInSeconds) noexcept
 {
-	setReleaseRate(std::max(0.0f, timeInSeconds * static_cast<float>(sampleRate)));
+	releaseTimeInSeconds = std::max(0.0f, timeInSeconds);
+	setReleaseRate(releaseTimeInSeconds * static_cast<float>(sampleRate));
+}
+
+void ADSR::setDecayTime(float timeInSeconds) noexcept
+{
+	decayTimeInSeconds = std::max(0.0f, timeInSeconds);
+	setDecayRate(decayTimeInSeconds * static_cast<float>(sampleRate));
 }
 
 void ADSR::setSustainLevel(float level) noexcept
