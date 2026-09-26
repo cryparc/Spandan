@@ -73,3 +73,4 @@ private:
     float attackBase { 0.0f };
     float decayBase { 0.0f };
     float releaseBase { 0.0f };
+};

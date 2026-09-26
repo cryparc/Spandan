@@ -13,13 +13,14 @@
 SpandanAudioProcessorEditor::SpandanAudioProcessorEditor (SpandanAudioProcessor& p)
     : AudioProcessorEditor (&p), audioProcessor (p)
 {
-    setSize (400, 300);
+  addAndMakeVisible (keyboardComponent);
+  setSize (400, 300);
 
-    waveformSelector.addItemList (juce::StringArray { "Sine", "Sawtooth", "Square", "Triangle" }, 1);
-    addAndMakeVisible (waveformSelector);
+  waveformSelector.addItemList (juce::StringArray { "Sine", "Sawtooth", "Square", "Triangle" }, 1);
+  addAndMakeVisible (waveformSelector);
 
-    waveformAttachment = std::make_unique<juce::AudioProcessorValueTreeState::ComboBoxAttachment> (
-      audioProcessor.apvts, "WAVEFORM", waveformSelector);
+  waveformAttachment = std::make_unique<juce::AudioProcessorValueTreeState::ComboBoxAttachment> (
+    audioProcessor.apvts, "WAVEFORM", waveformSelector);
 
 }
 
@@ -40,4 +41,5 @@ void SpandanAudioProcessorEditor::paint (juce::Graphics& g)
 void SpandanAudioProcessorEditor::resized()
 {
   waveformSelector.setBounds (20, 60, 150, 30);
+  keyboardComponent.setBounds (10, 180, getWidth() - 20, 100);
 }

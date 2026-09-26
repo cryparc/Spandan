@@ -29,6 +29,8 @@ private:
     // access the processor object that created it.
     SpandanAudioProcessor& audioProcessor;
 
+    juce::MidiKeyboardComponent keyboardComponent { audioProcessor.keyboardState, juce::MidiKeyboardComponent::horizontalKeyboard };
+
     juce::ComboBox waveformSelector;
     std::unique_ptr<juce::AudioProcessorValueTreeState::ComboBoxAttachment> waveformAttachment;
 
