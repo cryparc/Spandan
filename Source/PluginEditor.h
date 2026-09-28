@@ -28,18 +28,22 @@ private:
     // This reference is provided as a quick way for your editor to
     // access the processor object that created it.
     SpandanAudioProcessor& audioProcessor;
-
+    
     juce::MidiKeyboardComponent keyboardComponent { audioProcessor.keyboardState, juce::MidiKeyboardComponent::horizontalKeyboard };
+    
+    juce::ComboBox osc1WaveformSelector;
+    juce::ComboBox osc2WaveformSelector;
 
     juce::ComboBox waveformSelector;
     std::unique_ptr<juce::AudioProcessorValueTreeState::ComboBoxAttachment> waveformAttachment;
     
-    juce::ComboBox osc2WaveformSelector;
     juce::Slider osc2DetuneSlider;
     juce::Label osc2DetuneLabel;
     
-    std::unique_ptr<juce::AudioProcessorValueTreeState::ComboBoxAttachment> osc2WaveAttachment;
-    std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> osc2WaveAttachment;
+    std::unique_ptr<juce::AudioProcessorValueTreeState::ComboBoxAttachment>osc1WaveAttachment;
+    std::unique_ptr<juce::AudioProcessorValueTreeState::ComboBoxAttachment>osc2WaveAttachment;
+
+    std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment>osc2DetuneAttachment;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (SpandanAudioProcessorEditor)
 };

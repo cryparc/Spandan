@@ -16,10 +16,15 @@ SpandanAudioProcessorEditor::SpandanAudioProcessorEditor (SpandanAudioProcessor&
   addAndMakeVisible (keyboardComponent);
     
   setSize (800, 500);
+    addAndMakeVisible (osc1WaveformSelector);
+    addAndMakeVisible (osc2WaveformSelector);
     
     osc2WaveformSelector.addItemList({"Sine", "Saw", "Square", "Triangle"}, 1);
     addAndMakeVisible(osc2WaveformSelector);
     
+    osc1WaveAttachment = std::make_unique<juce::AudioProcessorValueTreeState::ComboBoxAttachment>(
+        audioProcessor.apvts, "OSC2_WAVEFORM", osc1WaveformSelector);
+
     osc2WaveAttachment = std::make_unique<juce::AudioProcessorValueTreeState::ComboBoxAttachment>(
         audioProcessor.apvts, "OSC2_WAVEFORM", osc2WaveformSelector);
     
@@ -27,7 +32,7 @@ SpandanAudioProcessorEditor::SpandanAudioProcessorEditor (SpandanAudioProcessor&
     osc2DetuneSlider.setTextBoxStyle(juce::Slider::TextBoxBelow, false, 60, 20);
     addAndMakeVisible(osc2DetuneSlider);
     
-    osc2WaveAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(
+    osc2DetuneAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(
         audioProcessor.apvts, "OSC2_DETUNE", osc2DetuneSlider);
 
     osc2DetuneLabel.setText("OSC 2 Detune (Cents)", juce::dontSendNotification);
@@ -58,9 +63,9 @@ void SpandanAudioProcessorEditor::paint (juce::Graphics& g)
 
 void SpandanAudioProcessorEditor::resized()
 {
-  waveformSelector.setBounds (20, 60, 150, 30);
-  keyboardComponent.setBounds (10, 180, getWidth() - 20, 100);
+  keyboardComponent.setBounds (20, 320, getWidth() - 40, 150);
     
-    osc1WaveformSelector.setBounds(250, 50, 150, 30);
-    osc2WaveformSelector.setBounds(250, 100, 120, 120);
+    osc1WaveformSelector.setBounds(30, 60, 160, 30);
+    osc2WaveformSelector.setBounds(230, 60, 160, 30);
+    osc2DetuneSlider.setBounds(230, 110, 120, 120);
 }
