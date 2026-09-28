@@ -33,6 +33,13 @@ private:
 
     juce::ComboBox waveformSelector;
     std::unique_ptr<juce::AudioProcessorValueTreeState::ComboBoxAttachment> waveformAttachment;
+    
+    juce::ComboBox osc2WaveformSelector;
+    juce::Slider osc2DetuneSlider;
+    juce::Label osc2DetuneLabel;
+    
+    std::unique_ptr<juce::AudioProcessorValueTreeState::ComboBoxAttachment> osc2WaveAttachment;
+    std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> osc2WaveAttachment;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (SpandanAudioProcessorEditor)
 };
