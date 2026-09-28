@@ -150,9 +150,10 @@ juce::AudioProcessorValueTreeState::ParameterLayout SpandanAudioProcessor::creat
     
     std::vector<std::unique_ptr<juce::RangedAudioParameter>> params;
 
-    
+                      
+                      
         params.push_back (std::make_unique<juce::AudioParameterChoice> (
-            "WAVEFORM", "Osc 1 Waveform", juce::StringArray { "Sine", "Saw", "Square", "Triangle" }, 0));
+            "OSC1_WAVEFORM", "Osc 1 Waveform", juce::StringArray { "Sine", "Saw", "Square", "Triangle" }, 0));
 
        
         params.push_back (std::make_unique<juce::AudioParameterChoice> (
@@ -180,8 +181,8 @@ void SpandanAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce
     const auto totalNumOutputChannels = getTotalNumOutputChannels();
     const auto totalNumInputChannels = getTotalNumInputChannels();
 
-    auto osc1Wave = static_cast<int> (apvts.getRawParameterValue ("WAVEFORM")->load());
-        auto osc2Wave = static_cast<int> (apvts.getRawParameterValue ("OSC2_WAVEFORM")->load());
+    auto osc1Wave = static_cast<int> (apvts.getRawParameterValue ("OSC1_WAVEFORM")->load());
+    auto osc2Wave = static_cast<int> (apvts.getRawParameterValue ("OSC2_WAVEFORM")->load());
         float detuneCents = apvts.getRawParameterValue ("OSC2_DETUNE")->load();
         float mixRatio = apvts.getRawParameterValue ("OSC_MIX")->load();
 

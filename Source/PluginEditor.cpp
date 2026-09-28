@@ -19,6 +19,9 @@ SpandanAudioProcessorEditor::SpandanAudioProcessorEditor (SpandanAudioProcessor&
     addAndMakeVisible (osc1WaveformSelector);
     addAndMakeVisible (osc2WaveformSelector);
     
+    osc1WaveformSelector.addItemList({"Sine", "Saw", "Square", "Triangle"}, 1);
+    addAndMakeVisible(osc1WaveformSelector);
+    
     osc2WaveformSelector.addItemList({"Sine", "Saw", "Square", "Triangle"}, 1);
     addAndMakeVisible(osc2WaveformSelector);
     
@@ -67,5 +70,5 @@ void SpandanAudioProcessorEditor::resized()
     
     osc1WaveformSelector.setBounds(30, 60, 160, 30);
     osc2WaveformSelector.setBounds(230, 60, 160, 30);
-    osc2DetuneSlider.setBounds(230, 110, 120, 120);
+    osc2DetuneSlider.setBounds(275, 110, 80, 80);
 }
