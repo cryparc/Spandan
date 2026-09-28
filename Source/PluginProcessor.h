@@ -62,7 +62,8 @@ class SpandanAudioProcessor  : public juce::AudioProcessor
     juce::AudioProcessorValueTreeState apvts;
 
   private:
-    Oscillator osc;
+    Oscillator osc1;
+    Oscillator osc2;
     ADSR adsrEnvelope;
     
     juce::AudioProcessorValueTreeState::ParameterLayout createParameterLayout();

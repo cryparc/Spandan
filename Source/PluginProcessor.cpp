@@ -98,9 +98,15 @@ void SpandanAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBloc
 {
 	juce::ignoreUnused (samplesPerBlock);
 
-	osc.prepareToPlay(sampleRate);
-	osc.setFrequency(440.0f);
-	osc.setWaveform(Oscillator::Waveform::Sine);
+    osc1.prepareToPlay (sampleRate);
+    osc2.prepareToPlay (sampleRate);
+
+	osc1.setFrequency(440.0f);
+	osc1.setWaveform(Oscillator::Waveform::Sine);
+    
+    osc2.setFrequency(440.0f);
+    osc2.setWaveform(Oscillator::Waveform::Sine);
+
 
 	adsrEnvelope.setSampleRate(sampleRate);
 	adsrEnvelope.setAttackTime(0.05f);
@@ -140,15 +146,28 @@ bool SpandanAudioProcessor::isBusesLayoutSupported (const BusesLayout& layouts) 
 //==============================================================================
 juce::AudioProcessorValueTreeState::ParameterLayout SpandanAudioProcessor::createParameterLayout() 
 { 
-    juce::AudioProcessorValueTreeState::ParameterLayout layout; 
- 
-    layout.add (std::make_unique<juce::AudioParameterChoice> (
-        juce::ParameterID { "WAVEFORM", 1 },
-        "Waveform",
-        juce::StringArray { "Sine", "Sawtooth", "Square", "Triangle" },
-        0 // Default: Sine
-        ));
-    return layout;
+    juce::AudioProcessorValueTreeState::ParameterLayout layout;
+    
+    std::vector<std::unique_ptr<juce::RangedAudioParameter>> params;
+
+    
+        params.push_back (std::make_unique<juce::AudioParameterChoice> (
+            "WAVEFORM", "Osc 1 Waveform", juce::StringArray { "Sine", "Saw", "Square", "Triangle" }, 0));
+
+       
+        params.push_back (std::make_unique<juce::AudioParameterChoice> (
+            "OSC2_WAVEFORM", "Osc 2 Waveform", juce::StringArray { "Sine", "Saw", "Square", "Triangle" }, 0));
+
+        
+        params.push_back (std::make_unique<juce::AudioParameterFloat> (
+            "OSC2_DETUNE", "Osc 2 Detune (Cents)", juce::NormalisableRange<float> (-100.0f, 100.0f, 0.1f), 0.0f));
+
+        
+        params.push_back (std::make_unique<juce::AudioParameterFloat> (
+            "OSC_MIX", "Oscillator Mix", juce::NormalisableRange<float> (0.0f, 1.0f, 0.01f), 0.5f));
+
+        return { params.begin(), params.end() };
+    
 }
 
 //==============================================================================
@@ -161,71 +180,58 @@ void SpandanAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce
     const auto totalNumOutputChannels = getTotalNumOutputChannels();
     const auto totalNumInputChannels = getTotalNumInputChannels();
 
-    auto waveformChoice = static_cast<int> (apvts.getRawParameterValue ("WAVEFORM")->load());
-    osc.setWaveform (static_cast<Oscillator::Waveform> (waveformChoice));
+    auto osc1Wave = static_cast<int> (apvts.getRawParameterValue ("WAVEFORM")->load());
+        auto osc2Wave = static_cast<int> (apvts.getRawParameterValue ("OSC2_WAVEFORM")->load());
+        float detuneCents = apvts.getRawParameterValue ("OSC2_DETUNE")->load();
+        float mixRatio = apvts.getRawParameterValue ("OSC_MIX")->load();
 
-    const auto numSamples = buffer.getNumSamples();
-    const auto numChannels = buffer.getNumChannels();
+    osc1.setWaveform (static_cast<Oscillator::Waveform> (osc1Wave));
+    osc2.setWaveform (static_cast<Oscillator::Waveform> (osc2Wave));
 
-    for (const auto metadata : midiMessages)
-    {
-        const auto msg = metadata.getMessage();
-        if (msg.isNoteOn(true))
+        const auto numSamples = buffer.getNumSamples();
+        const auto numChannels = buffer.getNumChannels();
+
+        // 2. Process MIDI Input & Calculate Detuned Frequencies
+        for (const auto metadata : midiMessages)
         {
-            const int noteNumber = msg.getNoteNumber();
-            const float frequency = 440.0f * std::pow (2.0f, (noteNumber - 69) / 12.0f);
+            const auto msg = metadata.getMessage();
+            if (msg.isNoteOn (true))
+            {
+                const int noteNumber = msg.getNoteNumber();
+                const float baseFreq = 440.0f * std::pow (2.0f, (noteNumber - 69) / 12.0f);
+                // Detune formula: f2 = f1 * 2^(cents / 1200)
+                const float detunedFreq = baseFreq * std::pow (2.0f, detuneCents / 1200.0f);
 
-            osc.setFrequency (frequency);
-            adsrEnvelope.gate (true);
+                osc1.setFrequency (baseFreq);
+                osc2.setFrequency (detunedFreq);
+                adsrEnvelope.gate (true);
+            }
+            else if (msg.isNoteOff() || (msg.isNoteOn() && msg.getVelocity() == 0))
+            {
+                adsrEnvelope.gate (false);
+            }
         }
-        else if (msg.isNoteOff())
+
+        // Clear unused input channels
+        for (auto channel = totalNumInputChannels; channel < totalNumOutputChannels; ++channel)
+            buffer.clear (channel, 0, numSamples);
+
+        // 3. Audio Thread Superposition & ADSR Amplitude Shaping Loop
+        for (int sample = 0; sample < numSamples; ++sample)
         {
-            adsrEnvelope.gate (false);
-        }
-    }
+            const float envelopeValue = adsrEnvelope.process();
+            const float s1 = osc1.processSample();
+            const float s2 = osc2.processSample();
 
-    for (auto channel = totalNumInputChannels; channel < totalNumOutputChannels; ++channel)
-        buffer.clear (channel, 0, numSamples);
+            // Linear blend superposition
+            const float mixedSample = (s1 * (1.0f - mixRatio)) + (s2 * mixRatio);
+            const float finalOutput = mixedSample * envelopeValue * 0.2f;
 
-    for (int sample = 0; sample < numSamples; ++sample)
-    {
-        const float envelopeValue = adsrEnvelope.process();
-        const float currentSample = osc.processSample() * envelopeValue * 0.1f;
-
-        for (int channel = 0; channel < numChannels; ++channel)
-            buffer.setSample(channel, sample, currentSample);
-    }
-
-    //Message output for midi input & log
-    for (const auto metadata : midiMessages)
-    {
-        const auto msg = metadata.getMessage();
-
-        if (msg.isNoteOn (true))
-        {
-            DBG ("MIDI Note On: " << msg.getNoteNumber() << " Velocity: " << msg.getVelocity());
-            
-            const int noteNumber = msg.getNoteNumber();
-            const float frequency = 440.0f * std::pow (2.0f, (noteNumber - 69) / 12.0f);
-
-            osc.setFrequency (frequency);
-            adsrEnvelope.gate (true);
-        }
-        else if (msg.isNoteOff() || (msg.isNoteOn() && msg.getVelocity() == 0))
-        {
-            DBG ("MIDI Note Off: " << msg.getNoteNumber());
-            adsrEnvelope.gate (false);
+            for (int channel = 0; channel < numChannels; ++channel)
+                buffer.setSample (channel, sample, finalOutput);
         }
     }
 
-    //Message output for keyboard midi input
-    for (const auto metadata : midiMessages)
-    {
-        const auto msg = metadata.getMessage();
-        DBG ("MIDI Received: " << msg.getDescription());
-    }
-
-}
 
 //==============================================================================
 bool SpandanAudioProcessor::hasEditor() const
