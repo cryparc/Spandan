@@ -11,7 +11,9 @@
 
 //==============================================================================
 SpandanAudioProcessorEditor::SpandanAudioProcessorEditor(SpandanAudioProcessor &p)
-    : AudioProcessorEditor(&p), audioProcessor(p)
+    : AudioProcessorEditor(&p),
+      audioProcessor(p),
+      keyboardComponent(p.keyboardState, juce::MidiKeyboardComponent::horizontalKeyboard)
 {
   addAndMakeVisible(keyboardComponent);
 
@@ -26,7 +28,7 @@ SpandanAudioProcessorEditor::SpandanAudioProcessorEditor(SpandanAudioProcessor &
   addAndMakeVisible(osc2WaveformSelector);
 
   osc1WaveAttachment = std::make_unique<juce::AudioProcessorValueTreeState::ComboBoxAttachment>(
-      audioProcessor.apvts, "OSC2_WAVEFORM", osc1WaveformSelector);
+      audioProcessor.apvts, "OSC1_WAVEFORM", osc1WaveformSelector);
 
   osc2WaveAttachment = std::make_unique<juce::AudioProcessorValueTreeState::ComboBoxAttachment>(
       audioProcessor.apvts, "OSC2_WAVEFORM", osc2WaveformSelector);
