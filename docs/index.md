@@ -25,7 +25,7 @@ Welcome to the official documentation and development blog for **Project SPANDAN
   * *Topics: FM Synthesis Mathematics (Bessel Functions), 0 dBFS Headroom Management, Algorithmic Voice Stealing, and JUCE Voice Thread Safety.*
 
 * 📈 **[Chapter 5: The Optics of Sound – Real-Time Radix-2 FFT & Lock-Free Visual Analytics](spandan-cookbook-chapter-5.md)**
-* **Core Topics:** Cooley-Tukey Radix-2 FFT ($\mathcal{O}(N \log_2 N)$), Hann Windowing, Decibel & Logarithmic Pixel Mapping, Lock-Free Single-Producer Single-Consumer (SPSC) Ring Buffer.*
+  * *Core Topics: Cooley-Tukey Radix-2 FFT ($\mathcal{O}(N \log_2 N)$), Hann Windowing, Decibel & Logarithmic Pixel Mapping, Lock-Free Single-Producer Single-Consumer (SPSC) Ring Buffer.*
 
 ---
 
