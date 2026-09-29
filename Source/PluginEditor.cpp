@@ -49,6 +49,26 @@ SpandanAudioProcessorEditor::SpandanAudioProcessorEditor(SpandanAudioProcessor &
 
   waveformAttachment = std::make_unique<juce::AudioProcessorValueTreeState::ComboBoxAttachment>(
       audioProcessor.apvts, "WAVEFORM", waveformSelector);
+
+  // FILTER UI COMPONENTS
+  filterTypeSelector.addItemList(juce::StringArray{"Low-Pass", "High-Pass", "Band-Pass"}, 1);
+  addAndMakeVisible(filterTypeSelector);
+  filterTypeAttachment = std::make_unique<juce::AudioProcessorValueTreeState::ComboBoxAttachment>(
+      audioProcessor.apvts, "FILTER_TYPE", filterTypeSelector);
+
+  // --- FILTER CUTOFF KNOB ---
+  filterCutoffSlider.setSliderStyle(juce::Slider::RotaryHorizontalVerticalDrag);
+  filterCutoffSlider.setTextBoxStyle(juce::Slider::TextBoxBelow, false, 60, 20);
+  addAndMakeVisible(filterCutoffSlider);
+  filterCutoffAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(
+      audioProcessor.apvts, "FILTER_CUTOFF", filterCutoffSlider);
+
+  // --- FILTER RESONANCE KNOB ---
+  filterResonanceSlider.setSliderStyle(juce::Slider::RotaryHorizontalVerticalDrag);
+  filterResonanceSlider.setTextBoxStyle(juce::Slider::TextBoxBelow, false, 60, 20);
+  addAndMakeVisible(filterResonanceSlider);
+  filterResonanceAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(
+      audioProcessor.apvts, "FILTER_RESONANCE", filterResonanceSlider);
 }
 
 SpandanAudioProcessorEditor::~SpandanAudioProcessorEditor()
@@ -72,4 +92,8 @@ void SpandanAudioProcessorEditor::resized()
   osc1WaveformSelector.setBounds(30, 60, 160, 30);
   osc2WaveformSelector.setBounds(230, 60, 160, 30);
   osc2DetuneSlider.setBounds(275, 110, 80, 80);
+
+  filterTypeSelector.setBounds(420, 60, 150, 30);
+  filterCutoffSlider.setBounds(420, 110, 80, 80);
+  filterResonanceSlider.setBounds(520, 110, 80, 80);
 }

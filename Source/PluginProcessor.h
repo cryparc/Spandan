@@ -11,6 +11,7 @@
 #include <JuceHeader.h>
 #include "Oscillator.h"
 #include "ADSR.h"
+#include "StateVariableFilter.h"
 
 //==============================================================================
 /**
@@ -63,6 +64,7 @@ public:
 private:
   Oscillator osc1;
   Oscillator osc2;
+  StateVariableFilter svfFilter;
   ADSR adsrEnvelope;
 
   juce::AudioProcessorValueTreeState::ParameterLayout createParameterLayout();

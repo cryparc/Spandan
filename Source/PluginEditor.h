@@ -47,5 +47,15 @@ private:
 
   std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> osc2DetuneAttachment;
 
+  // FILTER UI COMPONENTS
+  juce::ComboBox filterTypeSelector;
+  juce::Slider filterCutoffSlider;
+  juce::Slider filterResonanceSlider;
+
+  // Attachments
+  std::unique_ptr<juce::AudioProcessorValueTreeState::ComboBoxAttachment> filterTypeAttachment;
+  std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> filterCutoffAttachment;
+  std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> filterResonanceAttachment;
+
   JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(SpandanAudioProcessorEditor)
 };

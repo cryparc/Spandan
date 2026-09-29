@@ -1,3 +1,14 @@
+/*
+  ==============================================================================
+
+    ADSR.h
+    Created: Sep 2026
+    Author:  prash
+
+    Description: A simple ADSR (Attack, Decay, Sustain, Release) envelope generator implementation.
+  ==============================================================================
+*/
+
 #pragma once
 
 #include <JuceHeader.h>
