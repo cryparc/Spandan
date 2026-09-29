@@ -268,6 +268,8 @@ void SpandanAudioProcessor::processBlock(juce::AudioBuffer<float> &buffer, juce:
         // Apply ADSR Envelope Attenuation
         const float finalOutput = filteredSample * envValue * 0.15f;
 
+        audioFifo.push(finalOutput);
+
         for (int channel = 0; channel < totalNumOutputChannels; ++channel)
         {
             buffer.setSample(channel, sample, finalOutput);

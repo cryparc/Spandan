@@ -12,6 +12,8 @@
 #include "Oscillator.h"
 #include "ADSR.h"
 #include "StateVariableFilter.h"
+#include "AudioFifo.h"
+#include "OscilloscopeComponent.h"
 
 //==============================================================================
 /**
@@ -20,6 +22,7 @@ class SpandanAudioProcessor : public juce::AudioProcessor
 {
 public:
   juce::MidiKeyboardState keyboardState;
+  AudioFifo<float, 1024> audioFifo;
 
   //==============================================================================
   SpandanAudioProcessor();

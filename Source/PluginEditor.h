@@ -10,6 +10,7 @@
 
 #include <JuceHeader.h>
 #include "PluginProcessor.h"
+#include "OscilloscopeComponent.h"
 
 //==============================================================================
 /**
@@ -31,6 +32,8 @@ private:
 
   ADSR adsrEnvelope;
 
+  OscilloscopeComponent oscilloscopeComponent;
+
   juce::MidiKeyboardComponent keyboardComponent{audioProcessor.keyboardState, juce::MidiKeyboardComponent::horizontalKeyboard};
 
   juce::ComboBox osc1WaveformSelector;
@@ -41,6 +44,8 @@ private:
 
   juce::Slider osc2DetuneSlider;
   juce::Label osc2DetuneLabel;
+
+  juce::Slider oscMixSlider;
 
   std::unique_ptr<juce::AudioProcessorValueTreeState::ComboBoxAttachment> osc1WaveAttachment;
   std::unique_ptr<juce::AudioProcessorValueTreeState::ComboBoxAttachment> osc2WaveAttachment;
@@ -56,6 +61,9 @@ private:
   std::unique_ptr<juce::AudioProcessorValueTreeState::ComboBoxAttachment> filterTypeAttachment;
   std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> filterCutoffAttachment;
   std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> filterResonanceAttachment;
+  std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> oscMixAttachment;
+
+  void drawSerumPanel(juce::Graphics &g, juce::Rectangle<int> bounds, juce::String title);
 
   JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(SpandanAudioProcessorEditor)
 };

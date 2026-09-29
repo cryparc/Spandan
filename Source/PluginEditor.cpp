@@ -13,11 +13,15 @@
 SpandanAudioProcessorEditor::SpandanAudioProcessorEditor(SpandanAudioProcessor &p)
     : AudioProcessorEditor(&p),
       audioProcessor(p),
+      oscilloscopeComponent(p.audioFifo),
       keyboardComponent(p.keyboardState, juce::MidiKeyboardComponent::horizontalKeyboard)
+
 {
   addAndMakeVisible(keyboardComponent);
+  addAndMakeVisible(oscilloscopeComponent);
 
-  setSize(800, 500);
+  setSize(900, 580);
+
   addAndMakeVisible(osc1WaveformSelector);
   addAndMakeVisible(osc2WaveformSelector);
 
@@ -33,10 +37,6 @@ SpandanAudioProcessorEditor::SpandanAudioProcessorEditor(SpandanAudioProcessor &
   osc2WaveAttachment = std::make_unique<juce::AudioProcessorValueTreeState::ComboBoxAttachment>(
       audioProcessor.apvts, "OSC2_WAVEFORM", osc2WaveformSelector);
 
-  osc2DetuneSlider.setSliderStyle(juce::Slider::RotaryHorizontalVerticalDrag);
-  osc2DetuneSlider.setTextBoxStyle(juce::Slider::TextBoxBelow, false, 60, 20);
-  addAndMakeVisible(osc2DetuneSlider);
-
   osc2DetuneAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(
       audioProcessor.apvts, "OSC2_DETUNE", osc2DetuneSlider);
 
@@ -49,6 +49,14 @@ SpandanAudioProcessorEditor::SpandanAudioProcessorEditor(SpandanAudioProcessor &
 
   waveformAttachment = std::make_unique<juce::AudioProcessorValueTreeState::ComboBoxAttachment>(
       audioProcessor.apvts, "WAVEFORM", waveformSelector);
+
+  oscMixSlider.setSliderStyle(juce::Slider::RotaryHorizontalVerticalDrag);
+  oscMixSlider.setTextBoxStyle(juce::Slider::TextBoxBelow, false, 50, 18);
+
+  oscMixSlider.setRange(0.0, 1.0, 0.01);
+  addAndMakeVisible(oscMixSlider);
+  oscMixAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(
+      audioProcessor.apvts, "OSC_MIX", oscMixSlider);
 
   // FILTER UI COMPONENTS
   filterTypeSelector.addItemList(juce::StringArray{"Low-Pass", "High-Pass", "Band-Pass"}, 1);
@@ -83,17 +91,38 @@ void SpandanAudioProcessorEditor::paint(juce::Graphics &g)
   g.setColour(juce::Colours::white);
   g.setFont(juce::FontOptions(15.0f));
   g.drawText("SPANDAN", 20, 20, 300, 30, juce::Justification::left);
+
+  drawSerumPanel(g, juce::Rectangle<int>(15, 15, 275, 230), "OSC A (OSC 1)");
+  drawSerumPanel(g, juce::Rectangle<int>(300, 15, 275, 230), "OSC B (OSC 2)");
+  drawSerumPanel(g, juce::Rectangle<int>(585, 15, 300, 230), "FILTER");
+  drawSerumPanel(g, juce::Rectangle<int>(15, 255, 870, 170), "REAL-TIME MASTER OSCILLOSCOPE");
 }
 
 void SpandanAudioProcessorEditor::resized()
 {
-  keyboardComponent.setBounds(20, 320, getWidth() - 40, 150);
+  keyboardComponent.setBounds(15, 435, 870, 130);
 
-  osc1WaveformSelector.setBounds(30, 60, 160, 30);
-  osc2WaveformSelector.setBounds(230, 60, 160, 30);
-  osc2DetuneSlider.setBounds(275, 110, 80, 80);
+  osc1WaveformSelector.setBounds(30, 45, 245, 28);
+  osc2WaveformSelector.setBounds(315, 45, 245, 28);
+  osc2DetuneSlider.setBounds(330, 150, 65, 65);
 
-  filterTypeSelector.setBounds(420, 60, 150, 30);
-  filterCutoffSlider.setBounds(420, 110, 80, 80);
-  filterResonanceSlider.setBounds(520, 110, 80, 80);
+  filterTypeSelector.setBounds(600, 45, 270, 28);
+  filterCutoffSlider.setBounds(620, 150, 65, 65);
+  filterResonanceSlider.setBounds(770, 150, 65, 65);
+
+  oscilloscopeComponent.setBounds(30, 285, 840, 125);
+}
+
+void SpandanAudioProcessorEditor::drawSerumPanel(juce::Graphics &g, juce::Rectangle<int> bounds, juce::String title)
+{
+  g.setColour(juce::Colour(0xff18181c));
+  g.fillRoundedRectangle(bounds.toFloat(), 6.0f);
+
+  g.setColour(juce::Colour(0xff2a2a30));
+  g.drawRoundedRectangle(bounds.toFloat(), 6.0f, 1.5f);
+
+  g.setColour(juce::Colour(0xff00e5ff));
+  g.setFont(juce::FontOptions(14.0f, juce::Font::bold));
+
+  g.drawText(title, bounds.getX() + 12, bounds.getY() + 6, bounds.getWidth() - 24, 20, juce::Justification::left);
 }

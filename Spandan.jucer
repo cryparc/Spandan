@@ -19,6 +19,9 @@
       <FILE id="LYJX1k" name="PluginEditor.cpp" compile="1" resource="0"
             file="Source/PluginEditor.cpp"/>
       <FILE id="T6oqIp" name="PluginEditor.h" compile="0" resource="0" file="Source/PluginEditor.h"/>
+      <FILE id="KwGqXh" name="OscilloscopeComponent.h" compile="0" resource="0"
+            file="Source/OscilloscopeComponent.h"/>
+      <FILE id="VTHvIw" name="AudioFifo.h" compile="0" resource="0" file="Source/AudioFifo.h"/>
     </GROUP>
   </MAINGROUP>
   <MODULES>
