@@ -1,3 +1,14 @@
+/*
+  ==============================================================================
+
+    Oscillator.h
+    Created: August 2026
+    Author:  prash
+
+    Description: A simple Oscillator (Sine, Saw, Square, Triangle) implementation.
+  ==============================================================================
+*/
+
 #pragma once
 
 #include <JuceHeader.h>

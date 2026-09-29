@@ -1,3 +1,14 @@
+/*
+  ==============================================================================
+
+	ADSR.cpp
+	Created: Sep 2026
+	Author:  prash
+
+	Description: A simple ADSR (Attack, Decay, Sustain, Release) envelope generator implementation.
+  ==============================================================================
+*/
+
 #include "ADSR.h"
 
 ADSR::ADSR() noexcept

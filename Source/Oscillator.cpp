@@ -1,3 +1,14 @@
+/*
+  ==============================================================================
+
+    Oscillator.cpp
+    Created: August 2026
+    Author:  prash
+
+    Description: A simple Oscillator (Sine, Saw, Square, Triangle) implementation.
+  ==============================================================================
+*/
+
 #include "Oscillator.h"
 
 void Oscillator::prepareToPlay(double sampleRate) noexcept
