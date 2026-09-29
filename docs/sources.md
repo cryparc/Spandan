@@ -43,6 +43,16 @@
 
 ---
 
+### 📈 Chapter 5: The Optics of Sound – Real-Time Radix-2 FFT & Lock-Free Visual Analytics
+* **Cooley, J. W., & Tukey, J. W. (1965).** *An Algorithm for the Machine Calculation of Complex Fourier Series.* Mathematics of Computation, 19(90), 297–301.
+  * **Application:** Cooley-Tukey Radix-2 Decimation-in-Time Fast Fourier Transform (FFT) algorithm for $\mathcal{O}(N \log_2 N)$ time-to-frequency domain conversion.
+* **Harris, F. J. (1978).** *On the Use of Windows for Harmonic Analysis with the Discrete Fourier Transform.* Proceedings of the IEEE, 66(1), 51–83.
+  * **Application:** Algorithmic windowing functions, Hann window energy conservation, and spectral leakage elimination in finite sample truncation.
+* **Bos, M. (2023).** *Rust Atomics and Locks: Low-Level Concurrent Programming in Action.* O'Reilly Media.
+  * **Application:** C++20 `std::atomic` memory ordering, Acquire-Release semantics, and Lock-Free Single-Producer Single-Consumer (SPSC) circular ring buffers.
+
+---
+
 ### 📈 Supplementary & Advanced DSP Guides
 * **Zölzer, U. (Ed.). (2011).** *DAFX: Digital Audio Effects* (2nd ed.). John Wiley & Sons.
   * **Application:** One-pole recursive filter design, exponential smoothing ($\alpha$-coefficient), and parameter interpolation for control-rate UI smoothing.
