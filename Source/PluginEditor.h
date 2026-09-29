@@ -29,6 +29,8 @@ private:
   // access the processor object that created it.
   SpandanAudioProcessor &audioProcessor;
 
+  ADSR adsrEnvelope;
+
   juce::MidiKeyboardComponent keyboardComponent{audioProcessor.keyboardState, juce::MidiKeyboardComponent::horizontalKeyboard};
 
   juce::ComboBox osc1WaveformSelector;

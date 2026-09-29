@@ -8,6 +8,7 @@
 
 #include "PluginProcessor.h"
 #include "PluginEditor.h"
+#include <JuceHeader.h>
 
 //==============================================================================
 SpandanAudioProcessor::SpandanAudioProcessor()
@@ -147,17 +148,27 @@ juce::AudioProcessorValueTreeState::ParameterLayout SpandanAudioProcessor::creat
 
     std::vector<std::unique_ptr<juce::RangedAudioParameter>> params;
 
+    // --- OSCILLATOR 1 ---
     params.push_back(std::make_unique<juce::AudioParameterChoice>(
-        "OSC1_WAVEFORM", "Osc 1 Waveform", juce::StringArray{"Sine", "Saw", "Square", "Triangle"}, 0));
+        juce::ParameterID{"OSC1_WAVEFORM", 1},
+        "Oscillator 1 Waveform",
+        juce::StringArray{"Sine", "Saw", "Square", "Triangle"}, 0));
 
+    // --- OSCILLATOR 2 ---
     params.push_back(std::make_unique<juce::AudioParameterChoice>(
-        "OSC2_WAVEFORM", "Osc 2 Waveform", juce::StringArray{"Sine", "Saw", "Square", "Triangle"}, 0));
+        juce::ParameterID{"OSC2_WAVEFORM", 1},
+        "Oscillator 2 Waveform",
+        juce::StringArray{"Sine", "Saw", "Square", "Triangle"}, 0));
 
     params.push_back(std::make_unique<juce::AudioParameterFloat>(
-        "OSC2_DETUNE", "Osc 2 Detune (Cents)", juce::NormalisableRange<float>(-100.0f, 100.0f, 0.1f), 0.0f));
+        juce::ParameterID{"OSC2_DETUNE", 1},
+        "Oscillator 2 Detune (Cents)",
+        juce::NormalisableRange<float>(-100.0f, 100.0f, 0.1f), 0.0f));
 
     params.push_back(std::make_unique<juce::AudioParameterFloat>(
-        "OSC_MIX", "Oscillator Mix", juce::NormalisableRange<float>(0.0f, 1.0f, 0.01f), 0.5f));
+        juce::ParameterID{"OSC_MIX", 1},
+        "Oscillator Mix Ratio",
+        juce::NormalisableRange<float>(0.0f, 1.0f, 0.01f), 0.5f));
 
     return {params.begin(), params.end()};
 }
@@ -169,58 +180,57 @@ void SpandanAudioProcessor::processBlock(juce::AudioBuffer<float> &buffer, juce:
 
     keyboardState.processNextMidiBuffer(midiMessages, 0, buffer.getNumSamples(), true);
 
-    const auto totalNumOutputChannels = getTotalNumOutputChannels();
-    const auto totalNumInputChannels = getTotalNumInputChannels();
+    auto totalNumInputChannels = getTotalNumInputChannels();
+    auto totalNumOutputChannels = getTotalNumOutputChannels();
 
-    auto osc1Wave = static_cast<int>(apvts.getRawParameterValue("OSC1_WAVEFORM")->load());
-    auto osc2Wave = static_cast<int>(apvts.getRawParameterValue("OSC2_WAVEFORM")->load());
-    float detuneCents = apvts.getRawParameterValue("OSC2_DETUNE")->load();
-    float mixRatio = apvts.getRawParameterValue("OSC_MIX")->load();
+    for (auto i = totalNumInputChannels; i < totalNumOutputChannels; ++i)
+        buffer.clear(i, 0, buffer.getNumSamples());
+
+    const float detuneCents = *apvts.getRawParameterValue("OSC2_DETUNE");
+    const float mixRatio = *apvts.getRawParameterValue("OSC_MIX"); // [0.0 = OSC1, 1.0 = OSC2]
+
+    const int osc1Wave = static_cast<int>(*apvts.getRawParameterValue("OSC1_WAVEFORM"));
+    const int osc2Wave = static_cast<int>(*apvts.getRawParameterValue("OSC2_WAVEFORM"));
 
     osc1.setWaveform(static_cast<Oscillator::Waveform>(osc1Wave));
     osc2.setWaveform(static_cast<Oscillator::Waveform>(osc2Wave));
 
-    const auto numSamples = buffer.getNumSamples();
-    const auto numChannels = buffer.getNumChannels();
-
-    // 2. Process MIDI Input & Calculate Detuned Frequencies
     for (const auto metadata : midiMessages)
     {
-        const auto msg = metadata.getMessage();
-        if (msg.isNoteOn(true))
-        {
-            const int noteNumber = msg.getNoteNumber();
-            const float baseFreq = 440.0f * std::pow(2.0f, (noteNumber - 69) / 12.0f);
-            // Detune formula: f2 = f1 * 2^(cents / 1200)
-            const float detunedFreq = baseFreq * std::pow(2.0f, detuneCents / 1200.0f);
+        const auto message = metadata.getMessage();
 
-            osc1.setFrequency(baseFreq);
-            osc2.setFrequency(detunedFreq);
+        if (message.isNoteOn())
+        {
+            const int midiNoteNumber = message.getNoteNumber();
+            const float noteHz = juce::MidiMessage::getMidiNoteInHertz(midiNoteNumber);
+            const float detunedFreq = noteHz * std::pow(2.0f, detuneCents / 1200.0f);
+
+            osc1.setFrequency(detunedFreq);
+            osc2.setFrequency(noteHz);
+
             adsrEnvelope.gate(true);
         }
-        else if (msg.isNoteOff() || (msg.isNoteOn() && msg.getVelocity() == 0))
+        else if (message.isNoteOff())
         {
             adsrEnvelope.gate(false);
         }
     }
 
-    // Clear unused input channels
-    for (auto channel = totalNumInputChannels; channel < totalNumOutputChannels; ++channel)
-        buffer.clear(channel, 0, numSamples);
+    const int numSamples = buffer.getNumSamples();
 
-    // 3. Audio Thread Superposition & ADSR Amplitude Shaping Loop
     for (int sample = 0; sample < numSamples; ++sample)
     {
-        const float envelopeValue = adsrEnvelope.process();
-        const float s1 = osc1.processSample();
-        const float s2 = osc2.processSample();
+        const float envValue = adsrEnvelope.process();
 
-        // Linear blend superposition
-        const float mixedSample = (s1 * (1.0f - mixRatio)) + (s2 * mixRatio);
-        const float finalOutput = mixedSample * envelopeValue * 0.2f;
+        float osc1Sample = osc1.processSample();
+        float osc2Sample = osc2.processSample();
 
-        for (int channel = 0; channel < numChannels; ++channel)
-            buffer.setSample(channel, sample, finalOutput);
+        const float mixedSample = (((1.0f - mixRatio) * osc1Sample) + (mixRatio * osc2Sample)) * envValue * 0.15f;
+
+        for (int channel = 0; channel < totalNumOutputChannels; ++channel)
+        {
+            buffer.setSample(channel, sample, mixedSample);
+        }
     }
 }
 
