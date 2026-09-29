@@ -13,37 +13,37 @@
 
 //==============================================================================
 /**
-*/
-class SpandanAudioProcessorEditor  : public juce::AudioProcessorEditor
+ */
+class SpandanAudioProcessorEditor : public juce::AudioProcessorEditor
 {
 public:
-    SpandanAudioProcessorEditor (SpandanAudioProcessor&);
-    ~SpandanAudioProcessorEditor() override;
+  SpandanAudioProcessorEditor(SpandanAudioProcessor &);
+  ~SpandanAudioProcessorEditor() override;
 
-    //==============================================================================
-    void paint (juce::Graphics&) override;
-    void resized() override;
+  //==============================================================================
+  void paint(juce::Graphics &) override;
+  void resized() override;
 
 private:
-    // This reference is provided as a quick way for your editor to
-    // access the processor object that created it.
-    SpandanAudioProcessor& audioProcessor;
-    
-    juce::MidiKeyboardComponent keyboardComponent { audioProcessor.keyboardState, juce::MidiKeyboardComponent::horizontalKeyboard };
-    
-    juce::ComboBox osc1WaveformSelector;
-    juce::ComboBox osc2WaveformSelector;
+  // This reference is provided as a quick way for your editor to
+  // access the processor object that created it.
+  SpandanAudioProcessor &audioProcessor;
 
-    juce::ComboBox waveformSelector;
-    std::unique_ptr<juce::AudioProcessorValueTreeState::ComboBoxAttachment> waveformAttachment;
-    
-    juce::Slider osc2DetuneSlider;
-    juce::Label osc2DetuneLabel;
-    
-    std::unique_ptr<juce::AudioProcessorValueTreeState::ComboBoxAttachment>osc1WaveAttachment;
-    std::unique_ptr<juce::AudioProcessorValueTreeState::ComboBoxAttachment>osc2WaveAttachment;
+  juce::MidiKeyboardComponent keyboardComponent{audioProcessor.keyboardState, juce::MidiKeyboardComponent::horizontalKeyboard};
 
-    std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment>osc2DetuneAttachment;
+  juce::ComboBox osc1WaveformSelector;
+  juce::ComboBox osc2WaveformSelector;
 
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (SpandanAudioProcessorEditor)
+  juce::ComboBox waveformSelector;
+  std::unique_ptr<juce::AudioProcessorValueTreeState::ComboBoxAttachment> waveformAttachment;
+
+  juce::Slider osc2DetuneSlider;
+  juce::Label osc2DetuneLabel;
+
+  std::unique_ptr<juce::AudioProcessorValueTreeState::ComboBoxAttachment> osc1WaveAttachment;
+  std::unique_ptr<juce::AudioProcessorValueTreeState::ComboBoxAttachment> osc2WaveAttachment;
+
+  std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> osc2DetuneAttachment;
+
+  JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(SpandanAudioProcessorEditor)
 };

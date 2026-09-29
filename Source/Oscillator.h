@@ -8,7 +8,7 @@ class Oscillator
 public:
     enum class Waveform
     {
-        Sine=0,
+        Sine = 0,
         Saw,
         Square,
         Triangle
@@ -24,14 +24,13 @@ public:
     void resetPhase() noexcept;
 
 private:
-    double currentSampleRate { 44100.0 };
-    double targetFrequency { 440.0 };
+    double currentSampleRate{44100.0};
+    double targetFrequency{440.0};
 
-    double currentPhase { 0.0 };
-    double phaseIncrement { 0.0 };
+    double currentPhase{0.0};
+    double phaseIncrement{0.0};
 
-    Waveform currentWaveform { Waveform::Sine };
+    Waveform currentWaveform{Waveform::Sine};
 
     void updatePhaseIncrement() noexcept;
 };
-

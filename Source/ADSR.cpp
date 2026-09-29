@@ -13,19 +13,19 @@ ADSR::ADSR() noexcept
 
 void ADSR::setSampleRate(double newSampleRate) noexcept
 {
-    if (newSampleRate > 0.0 && sampleRate != newSampleRate)
-    {
-        sampleRate = newSampleRate;
-        setAttackTime(attackTimeInSeconds);
-        setDecayTime(decayTimeInSeconds);
-        setReleaseTime(releaseTimeInSeconds);
-    }
+	if (newSampleRate > 0.0 && sampleRate != newSampleRate)
+	{
+		sampleRate = newSampleRate;
+		setAttackTime(attackTimeInSeconds);
+		setDecayTime(decayTimeInSeconds);
+		setReleaseTime(releaseTimeInSeconds);
+	}
 }
 
 void ADSR::reset() noexcept
 {
-    state = env_idle;
-    output = 0.0f;
+	state = env_idle;
+	output = 0.0f;
 }
 
 float ADSR::calcCoef(float rate, float targetRatio) const noexcept
@@ -123,43 +123,43 @@ float ADSR::process() noexcept
 {
 	switch (state)
 	{
-		case env_idle:
-			break;
+	case env_idle:
+		break;
 
-		case env_attack:
-			output = attackBase + output * attackCoef;
-			if (output >= 1.0f)
-			{
-				output = 1.0f;
-				state = env_decay;
-			}
-			break;
+	case env_attack:
+		output = attackBase + output * attackCoef;
+		if (output >= 1.0f)
+		{
+			output = 1.0f;
+			state = env_decay;
+		}
+		break;
 
-		case env_decay:
-			output = decayBase + output * decayCoef;
-			if (output <= sustainLevel)
-			{
-				output = sustainLevel;
-				state = env_sustain;
-			}
-			break;
-
-		case env_sustain:
+	case env_decay:
+		output = decayBase + output * decayCoef;
+		if (output <= sustainLevel)
+		{
 			output = sustainLevel;
-			break;
+			state = env_sustain;
+		}
+		break;
 
-		case env_release:
-			output = releaseBase + output * releaseCoef;
-			if (output <= 0.0f)
-			{
-				output = 0.0f;
-				state = env_idle;
-			}
-			break;
+	case env_sustain:
+		output = sustainLevel;
+		break;
 
-		default:
-			jassertfalse;
-			break;
+	case env_release:
+		output = releaseBase + output * releaseCoef;
+		if (output <= 0.0f)
+		{
+			output = 0.0f;
+			state = env_idle;
+		}
+		break;
+
+	default:
+		jassertfalse;
+		break;
 	}
 
 	return output;
