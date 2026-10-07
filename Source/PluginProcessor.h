@@ -22,7 +22,7 @@ class SpandanAudioProcessor : public juce::AudioProcessor
 {
 public:
   juce::MidiKeyboardState keyboardState;
-  AudioFifo<float, 1024> audioFifo;
+  AudioFifo<ScopeFrame, 1024> audioFifo;
 
   //==============================================================================
   SpandanAudioProcessor();

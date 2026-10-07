@@ -153,13 +153,11 @@ juce::AudioProcessorValueTreeState::ParameterLayout SpandanAudioProcessor::creat
 
     std::vector<std::unique_ptr<juce::RangedAudioParameter>> params;
 
-    // --- OSCILLATOR 1 ---
     params.push_back(std::make_unique<juce::AudioParameterChoice>(
         juce::ParameterID{"OSC1_WAVEFORM", 1},
         "Oscillator 1 Waveform",
         juce::StringArray{"Sine", "Saw", "Square", "Triangle"}, 0));
 
-    // --- OSCILLATOR 2 ---
     params.push_back(std::make_unique<juce::AudioParameterChoice>(
         juce::ParameterID{"OSC2_WAVEFORM", 1},
         "Oscillator 2 Waveform",
@@ -175,7 +173,6 @@ juce::AudioProcessorValueTreeState::ParameterLayout SpandanAudioProcessor::creat
         "Oscillator Mix Ratio",
         juce::NormalisableRange<float>(0.0f, 1.0f, 0.01f), 0.5f));
 
-    // --- STATE VARIABLE FILTER (SVF) PARAMETERS ---
     params.push_back(std::make_unique<juce::AudioParameterChoice>(
         juce::ParameterID{"FILTER_TYPE", 1},
         "Filter Type",
@@ -184,7 +181,7 @@ juce::AudioProcessorValueTreeState::ParameterLayout SpandanAudioProcessor::creat
     params.push_back(std::make_unique<juce::AudioParameterFloat>(
         juce::ParameterID{"FILTER_CUTOFF", 1},
         "Filter Cutoff (Hz)",
-        juce::NormalisableRange<float>(20.0f, 20000.0f, 0.1f, 0.5f), // 0.5f skew gives natural logarithmic knob feel
+        juce::NormalisableRange<float>(20.0f, 20000.0f, 0.1f, 0.5f),
         1000.0f));
 
     params.push_back(std::make_unique<juce::AudioParameterFloat>(
@@ -209,9 +206,8 @@ void SpandanAudioProcessor::processBlock(juce::AudioBuffer<float> &buffer, juce:
     for (auto i = totalNumInputChannels; i < totalNumOutputChannels; ++i)
         buffer.clear(i, 0, buffer.getNumSamples());
 
-    // Fetch APVTS Parameters
     const float detuneCents = *apvts.getRawParameterValue("OSC2_DETUNE");
-    const float mixRatio = *apvts.getRawParameterValue("OSC_MIX"); // [0.0 = OSC1, 1.0 = OSC2]
+    const float mixRatio = *apvts.getRawParameterValue("OSC_MIX");
 
     const int osc1Wave = static_cast<int>(*apvts.getRawParameterValue("OSC1_WAVEFORM"));
     const int osc2Wave = static_cast<int>(*apvts.getRawParameterValue("OSC2_WAVEFORM"));
@@ -219,7 +215,6 @@ void SpandanAudioProcessor::processBlock(juce::AudioBuffer<float> &buffer, juce:
     osc1.setWaveform(static_cast<Oscillator::Waveform>(osc1Wave));
     osc2.setWaveform(static_cast<Oscillator::Waveform>(osc2Wave));
 
-    // Filter APVTS Parameters
     const int filterTypeVal = static_cast<int>(*apvts.getRawParameterValue("FILTER_TYPE"));
     const float cutoffHz = *apvts.getRawParameterValue("FILTER_CUTOFF");
     const float resonanceQ = *apvts.getRawParameterValue("FILTER_RESONANCE");
@@ -228,7 +223,6 @@ void SpandanAudioProcessor::processBlock(juce::AudioBuffer<float> &buffer, juce:
                             cutoffHz,
                             resonanceQ);
 
-    // MIDI Note Handling
     for (const auto metadata : midiMessages)
     {
         const auto message = metadata.getMessage();
@@ -252,7 +246,6 @@ void SpandanAudioProcessor::processBlock(juce::AudioBuffer<float> &buffer, juce:
 
     const int numSamples = buffer.getNumSamples();
 
-    // Signal Processing Pipeline: Dual Osc -&gt; TPT SVF -&gt; ADSR
     for (int sample = 0; sample < numSamples; ++sample)
     {
         const float envValue = adsrEnvelope.process();
@@ -260,15 +253,11 @@ void SpandanAudioProcessor::processBlock(juce::AudioBuffer<float> &buffer, juce:
         float osc1Sample = osc1.processSample();
         float osc2Sample = osc2.processSample();
 
-        const float mixedSample = (((1.0f - mixRatio) * osc1Sample) + (mixRatio * osc2Sample)) * envValue * 0.15f;
-
-        // Pass through 2-Pole TPT State Variable Filter
+        const float mixedSample = ((1.0f - mixRatio) * osc1Sample) + (mixRatio * osc2Sample);
         const float filteredSample = svfFilter.processSample(mixedSample);
-
-        // Apply ADSR Envelope Attenuation
         const float finalOutput = filteredSample * envValue * 0.15f;
 
-        audioFifo.push(finalOutput);
+        audioFifo.push({osc1Sample, osc2Sample, finalOutput});
 
         for (int channel = 0; channel < totalNumOutputChannels; ++channel)
         {

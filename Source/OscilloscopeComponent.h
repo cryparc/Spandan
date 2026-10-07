@@ -19,9 +19,9 @@
 class OscilloscopeComponent : public juce::Component, public juce::Timer
 {
 public:
-  OscilloscopeComponent(AudioFifo<float, 1024> &fifoToUse) : fifo(fifoToUse)
+  OscilloscopeComponent(AudioFifo<ScopeFrame, 1024> &fifoToUse) : fifo(fifoToUse)
   {
-    startTimerHz(60); // Update at 60 Hz
+    startTimerHz(60);
   }
 
   ~OscilloscopeComponent() override
@@ -31,10 +31,10 @@ public:
 
   void timerCallback() override
   {
-    float sample = 0.0f;
-    while (fifo.pop(sample))
+    ScopeFrame frame;
+    while (fifo.pop(frame))
     {
-      sampleBuffer[bufferWriteIndex] = sample;
+      sampleBuffer[bufferWriteIndex] = frame;
       bufferWriteIndex = (bufferWriteIndex + 1) % sampleBuffer.size();
     }
     repaint();
@@ -42,24 +42,25 @@ public:
 
   void paint(juce::Graphics &g) override
   {
-    g.fillAll(juce::Colour(0xff121214)); // Dark background
-    // Draw Oscilloscope Border & Grid Lines
+    g.fillAll(juce::Colour(0xff121214));
     g.setColour(juce::Colours::darkgrey.withAlpha(0.4f));
     g.drawRect(getLocalBounds(), 1);
     g.drawHorizontalLine(getHeight() / 2, 0.0f, static_cast<float>(getWidth()));
 
-    // Positive Zero-Crossing Detection
     size_t triggerIndex = 0;
     bool triggerFound = false;
 
     const size_t bufSize = sampleBuffer.size();
 
-    for (size_t i = 0; i < bufSize - 1; ++i)
+    for (size_t i = 0; i + 1 < bufSize; ++i)
     {
-      size_t idx0 = (bufferWriteIndex + i) % bufSize;
-      size_t idx1 = (idx0 + 1) % bufSize;
+      const size_t idx0 = (bufferWriteIndex + i) % bufSize;
+      const size_t idx1 = (idx0 + 1) % bufSize;
 
-      if (sampleBuffer[idx0] <= 0.0f && sampleBuffer[idx1] > 0.0f)
+      const float sample0 = sampleBuffer[idx0].master;
+      const float sample1 = sampleBuffer[idx1].master;
+
+      if (sample0 <= 0.0f && sample1 > 0.0f)
       {
         triggerIndex = idx1;
         triggerFound = true;
@@ -70,35 +71,55 @@ public:
     if (!triggerFound)
       triggerIndex = bufferWriteIndex;
 
-    // Render Waveform Path
-    juce::Path wavePath;
-    const float width = static_cast<float>(getWidth());
-    const float height = static_cast<float>(getHeight());
-    const float centerY = height / 2.0f;
+    const auto width = static_cast<float>(getWidth());
+    const auto height = static_cast<float>(getHeight());
+    const auto centerY = height / 2.0f;
 
-    const int numPointsToDraw = std::min(256, static_cast<int>(width)); // Limit to 256 points for performance
-    const float xInc = width / static_cast<float>(numPointsToDraw - 1);
+    const auto numPointsToDraw = std::min<size_t>(256, static_cast<size_t>(getWidth()));
+    if (numPointsToDraw == 0)
+      return;
 
-    for (int i = 0; i < numPointsToDraw; ++i)
+    const float xInc = width / static_cast<float>(numPointsToDraw);
+
+    juce::Path osc1Path;
+    juce::Path osc2Path;
+    juce::Path masterPath;
+
+    for (size_t i = 0; i < numPointsToDraw; ++i)
     {
-      size_t sampleIdx = (triggerIndex + i) % bufSize;
-      float sampleVal = sampleBuffer[sampleIdx];
-      float x = i * xInc;
-      float y = centerY - (sampleVal * (height / 2.0f) * 0.85f); // 85% headroom scaling
+      const auto sampleIdx = (triggerIndex + i) % bufSize;
+      const auto &frame = sampleBuffer[sampleIdx];
+      const auto x = static_cast<float>(i) * xInc;
+
+      const auto yosc1 = centerY - (frame.osc1 * centerY * 0.85f);
+      const auto yOsc2 = centerY - (frame.osc2 * centerY * 0.85f);
+      const auto yMaster = centerY - (frame.master * centerY * 0.85f);
 
       if (i == 0)
-        wavePath.startNewSubPath(x, y);
+      {
+        osc1Path.startNewSubPath(x, yosc1);
+        osc2Path.startNewSubPath(x, yOsc2);
+        masterPath.startNewSubPath(x, yMaster);
+      }
       else
-        wavePath.lineTo(x, y);
+      {
+        osc1Path.lineTo(x, yosc1);
+        osc2Path.lineTo(x, yOsc2);
+        masterPath.lineTo(x, yMaster);
+      }
     }
 
-    g.setColour(juce::Colour(0xff00e5ff)); // Bright Cyan Glow
-    g.strokePath(wavePath, juce::PathStrokeType(2.0f));
+    g.setColour(juce::Colour(0x60ffd700));
+    g.strokePath(osc1Path, juce::PathStrokeType(1.0f));
+    g.setColour(juce::Colour(0x60ff69b4));
+    g.strokePath(osc2Path, juce::PathStrokeType(1.0f));
+    g.setColour(juce::Colour(0xff00e5ff));
+    g.strokePath(masterPath, juce::PathStrokeType(2.0f));
   }
 
 private:
-  AudioFifo<float, 1024> &fifo;
-  std::array<float, 1024> sampleBuffer{};
+  AudioFifo<ScopeFrame, 1024> &fifo;
+  std::array<ScopeFrame, 1024> sampleBuffer{};
   size_t bufferWriteIndex{0};
 
   JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(OscilloscopeComponent)

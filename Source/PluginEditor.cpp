@@ -92,10 +92,10 @@ void SpandanAudioProcessorEditor::paint(juce::Graphics &g)
   g.setFont(juce::FontOptions(15.0f));
   g.drawText("SPANDAN", 20, 20, 300, 30, juce::Justification::left);
 
-  drawSerumPanel(g, juce::Rectangle<int>(15, 15, 275, 230), "OSC A (OSC 1)");
-  drawSerumPanel(g, juce::Rectangle<int>(300, 15, 275, 230), "OSC B (OSC 2)");
+  drawSerumPanel(g, juce::Rectangle<int>(15, 15, 275, 230), "OSC A");
+  drawSerumPanel(g, juce::Rectangle<int>(300, 15, 275, 230), "OSC B");
   drawSerumPanel(g, juce::Rectangle<int>(585, 15, 300, 230), "FILTER");
-  drawSerumPanel(g, juce::Rectangle<int>(15, 255, 870, 170), "REAL-TIME MASTER OSCILLOSCOPE");
+  drawSerumPanel(g, juce::Rectangle<int>(15, 255, 870, 170), "MASTER OSCILLOSCOPE");
 }
 
 void SpandanAudioProcessorEditor::resized()
