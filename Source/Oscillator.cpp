@@ -13,19 +13,16 @@
 
 void Oscillator::prepareToPlay(double sampleRate) noexcept
 {
-    currentSampleRate = (sampleRate > 0.0) ? sampleRate : 44100.0;
+    currentSampleRate = sampleRate;
     resetPhase();
     updatePhaseIncrement();
 }
 
 void Oscillator::setFrequency(float frequencyInHz) noexcept
 {
-    if (frequencyInHz < 0.0f)
-        frequencyInHz = 0.0f;
-
-    if (targetFrequency != static_cast<double>(frequencyInHz))
+    if (targetFrequency != frequencyInHz)
     {
-        targetFrequency = static_cast<double>(frequencyInHz);
+        targetFrequency = frequencyInHz;
         updatePhaseIncrement();
     }
 }
@@ -33,6 +30,11 @@ void Oscillator::setFrequency(float frequencyInHz) noexcept
 void Oscillator::setWaveform(Waveform newWaveform) noexcept
 {
     currentWaveform = newWaveform;
+}
+
+void Oscillator::setPulseWidth(float newPulseWidth) noexcept
+{
+    pulseWidth = std::clamp(newPulseWidth, 0.01f, 0.99f);
 }
 
 void Oscillator::resetPhase() noexcept
@@ -68,6 +70,14 @@ float Oscillator::processSample() noexcept
 
     case Waveform::Triangle:
         raw = 2.0 * std::abs(2.0 * currentPhase - 1.0) - 1.0;
+        break;
+
+    case Waveform::Pulse:
+        raw = (currentPhase < pulseWidth) ? 1.0 : -1.0;
+        break;
+
+    case Waveform::Noise:
+        raw = static_cast<double>(random.nextFloat() * 2.0f - 1.0f);
         break;
     }
 

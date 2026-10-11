@@ -173,6 +173,11 @@ juce::AudioProcessorValueTreeState::ParameterLayout SpandanAudioProcessor::creat
         "Oscillator Mix Ratio",
         juce::NormalisableRange<float>(0.0f, 1.0f, 0.01f), 0.5f));
 
+    params.push_back(std::make_unique<juce::AudioParameterFloat>(
+        juce::ParameterID{"PULSE_WIDTH", 1},
+        "Pulse Width",
+        juce::NormalisableRange<float>(0.01f, 0.99f, 0.01f), 0.5f));
+
     params.push_back(std::make_unique<juce::AudioParameterChoice>(
         juce::ParameterID{"FILTER_TYPE", 1},
         "Filter Type",
@@ -189,6 +194,27 @@ juce::AudioProcessorValueTreeState::ParameterLayout SpandanAudioProcessor::creat
         "Filter Resonance (Q)",
         juce::NormalisableRange<float>(0.707f, 10.0f, 0.01f),
         0.707f));
+
+    params.push_back(std::make_unique<juce::AudioParameterFloat>(
+        juce::ParameterID{"ATTACK", 1},
+        "Attack",
+        juce::NormalisableRange<float>(0.001f, 5.0f, 0.001f),
+        0.3f));
+
+    params.push_back(std::make_unique<juce::AudioParameterFloat>(
+        juce::ParameterID{"DECAY", 1},
+        "Decay",
+        juce::NormalisableRange<float>(0.001f, 5.0f, 0.001f), 0.3f));
+
+    params.push_back(std::make_unique<juce::AudioParameterFloat>(
+        juce::ParameterID{"SUSTAIN", 1},
+        "Sustain",
+        juce::NormalisableRange<float>(0.0f, 1.0f, 0.01f), 0.8f));
+
+    params.push_back(std::make_unique<juce::AudioParameterFloat>(
+        juce::ParameterID{"RELEASE", 1},
+        "Release",
+        juce::NormalisableRange<float>(0.001f, 5.0f, 0.001f), 0.3f));
 
     return {params.begin(), params.end()};
 }
@@ -209,11 +235,16 @@ void SpandanAudioProcessor::processBlock(juce::AudioBuffer<float> &buffer, juce:
     const float detuneCents = *apvts.getRawParameterValue("OSC2_DETUNE");
     const float mixRatio = *apvts.getRawParameterValue("OSC_MIX");
 
+    const float pulseWidth = *apvts.getRawParameterValue("PULSE_WIDTH");
+
     const int osc1Wave = static_cast<int>(*apvts.getRawParameterValue("OSC1_WAVEFORM"));
     const int osc2Wave = static_cast<int>(*apvts.getRawParameterValue("OSC2_WAVEFORM"));
 
     osc1.setWaveform(static_cast<Oscillator::Waveform>(osc1Wave));
     osc2.setWaveform(static_cast<Oscillator::Waveform>(osc2Wave));
+
+    osc1.setPulseWidth(pulseWidth);
+    osc2.setPulseWidth(pulseWidth);
 
     const int filterTypeVal = static_cast<int>(*apvts.getRawParameterValue("FILTER_TYPE"));
     const float cutoffHz = *apvts.getRawParameterValue("FILTER_CUTOFF");
@@ -222,6 +253,16 @@ void SpandanAudioProcessor::processBlock(juce::AudioBuffer<float> &buffer, juce:
     svfFilter.setParameters(static_cast<StateVariableFilter::FilterType>(filterTypeVal),
                             cutoffHz,
                             resonanceQ);
+
+    const float attack = *apvts.getRawParameterValue("ATTACK");
+    const float decay = *apvts.getRawParameterValue("DECAY");
+    const float sustain = *apvts.getRawParameterValue("SUSTAIN");
+    const float release = *apvts.getRawParameterValue("RELEASE");
+
+    adsrEnvelope.setAttackTime(attack);
+    adsrEnvelope.setDecayTime(decay);
+    adsrEnvelope.setSustainLevel(sustain);
+    adsrEnvelope.setReleaseTime(release);
 
     for (const auto metadata : midiMessages)
     {

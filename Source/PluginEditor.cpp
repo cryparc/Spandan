@@ -25,14 +25,14 @@ SpandanAudioProcessorEditor::SpandanAudioProcessorEditor(SpandanAudioProcessor &
   addAndMakeVisible(osc1WaveformSelector);
   addAndMakeVisible(osc2WaveformSelector);
 
-  osc1WaveformSelector.addItemList({"Sine", "Saw", "Square", "Triangle"}, 1);
+  osc1WaveformSelector.addItemList({"Sine", "Saw", "Square", "Triangle", "Pulse", "Noise"}, 1);
   addAndMakeVisible(osc1WaveformSelector);
-
-  osc2WaveformSelector.addItemList({"Sine", "Saw", "Square", "Triangle"}, 1);
-  addAndMakeVisible(osc2WaveformSelector);
 
   osc1WaveAttachment = std::make_unique<juce::AudioProcessorValueTreeState::ComboBoxAttachment>(
       audioProcessor.apvts, "OSC1_WAVEFORM", osc1WaveformSelector);
+
+  osc2WaveformSelector.addItemList({"Sine", "Saw", "Square", "Triangle", "Pulse", "Noise"}, 1);
+  addAndMakeVisible(osc2WaveformSelector);
 
   osc2WaveAttachment = std::make_unique<juce::AudioProcessorValueTreeState::ComboBoxAttachment>(
       audioProcessor.apvts, "OSC2_WAVEFORM", osc2WaveformSelector);
@@ -44,7 +44,7 @@ SpandanAudioProcessorEditor::SpandanAudioProcessorEditor(SpandanAudioProcessor &
   osc2DetuneLabel.attachToComponent(&osc2DetuneSlider, false);
   addAndMakeVisible(osc2DetuneLabel);
 
-  waveformSelector.addItemList(juce::StringArray{"Sine", "Sawtooth", "Square", "Triangle"}, 1);
+  waveformSelector.addItemList(juce::StringArray{"Sine", "Sawtooth", "Square", "Triangle", "Pulse", "Noise"}, 1);
   addAndMakeVisible(waveformSelector);
 
   waveformAttachment = std::make_unique<juce::AudioProcessorValueTreeState::ComboBoxAttachment>(
@@ -58,25 +58,44 @@ SpandanAudioProcessorEditor::SpandanAudioProcessorEditor(SpandanAudioProcessor &
   oscMixAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(
       audioProcessor.apvts, "OSC_MIX", oscMixSlider);
 
-  // FILTER UI COMPONENTS
+  pulseWidthSlider.setSliderStyle(juce::Slider::RotaryHorizontalVerticalDrag);
+  pulseWidthSlider.setTextBoxStyle(juce::Slider::TextBoxBelow, false, 50, 18);
+  addAndMakeVisible(pulseWidthSlider);
+  pulseWidthAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(
+      audioProcessor.apvts, "PULSE_WIDTH", pulseWidthSlider);
+
   filterTypeSelector.addItemList(juce::StringArray{"Low-Pass", "High-Pass", "Band-Pass"}, 1);
   addAndMakeVisible(filterTypeSelector);
   filterTypeAttachment = std::make_unique<juce::AudioProcessorValueTreeState::ComboBoxAttachment>(
       audioProcessor.apvts, "FILTER_TYPE", filterTypeSelector);
 
-  // --- FILTER CUTOFF KNOB ---
   filterCutoffSlider.setSliderStyle(juce::Slider::RotaryHorizontalVerticalDrag);
   filterCutoffSlider.setTextBoxStyle(juce::Slider::TextBoxBelow, false, 60, 20);
   addAndMakeVisible(filterCutoffSlider);
   filterCutoffAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(
       audioProcessor.apvts, "FILTER_CUTOFF", filterCutoffSlider);
 
-  // --- FILTER RESONANCE KNOB ---
   filterResonanceSlider.setSliderStyle(juce::Slider::RotaryHorizontalVerticalDrag);
   filterResonanceSlider.setTextBoxStyle(juce::Slider::TextBoxBelow, false, 60, 20);
   addAndMakeVisible(filterResonanceSlider);
   filterResonanceAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(
       audioProcessor.apvts, "FILTER_RESONANCE", filterResonanceSlider);
+
+  for (auto *slider : {&attackSlider, &decaySlider, &sustainSlider, &releaseSlider})
+  {
+    slider->setSliderStyle(juce::Slider::RotaryHorizontalVerticalDrag);
+    slider->setTextBoxStyle(juce::Slider::TextBoxBelow, false, 50, 18);
+    addAndMakeVisible(*slider);
+  }
+
+  attackAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(
+      audioProcessor.apvts, "ATTACK", attackSlider);
+  decayAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(
+      audioProcessor.apvts, "DECAY", decaySlider);
+  sustainAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(
+      audioProcessor.apvts, "SUSTAIN", sustainSlider);
+  releaseAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(
+      audioProcessor.apvts, "RELEASE", releaseSlider);
 }
 
 SpandanAudioProcessorEditor::~SpandanAudioProcessorEditor()
@@ -94,23 +113,36 @@ void SpandanAudioProcessorEditor::paint(juce::Graphics &g)
 
   drawSerumPanel(g, juce::Rectangle<int>(15, 15, 275, 230), "OSC A");
   drawSerumPanel(g, juce::Rectangle<int>(300, 15, 275, 230), "OSC B");
+
   drawSerumPanel(g, juce::Rectangle<int>(585, 15, 300, 230), "FILTER");
-  drawSerumPanel(g, juce::Rectangle<int>(15, 255, 870, 170), "MASTER OSCILLOSCOPE");
+
+  drawSerumPanel(g, juce::Rectangle<int>(15, 255, 410, 170), "AMP ENVELOPE (ADSR)");
+
+  drawSerumPanel(g, juce::Rectangle<int>(435, 255, 450, 170), "MASTER OSCILLOSCOPE");
 }
 
 void SpandanAudioProcessorEditor::resized()
 {
-  keyboardComponent.setBounds(15, 435, 870, 130);
-
   osc1WaveformSelector.setBounds(30, 45, 245, 28);
+  pulseWidthSlider.setBounds(120, 130, 65, 65);
+
   osc2WaveformSelector.setBounds(315, 45, 245, 28);
-  osc2DetuneSlider.setBounds(330, 150, 65, 65);
+  osc2DetuneSlider.setBounds(330, 130, 65, 65);
+
+  oscMixSlider.setBounds(480, 130, 65, 65);
 
   filterTypeSelector.setBounds(600, 45, 270, 28);
-  filterCutoffSlider.setBounds(620, 150, 65, 65);
-  filterResonanceSlider.setBounds(770, 150, 65, 65);
+  filterCutoffSlider.setBounds(620, 130, 65, 65);
+  filterResonanceSlider.setBounds(770, 130, 65, 65);
 
-  oscilloscopeComponent.setBounds(30, 285, 840, 125);
+  attackSlider.setBounds(30, 310, 65, 65);
+  decaySlider.setBounds(130, 310, 65, 65);
+  sustainSlider.setBounds(230, 310, 65, 65);
+  releaseSlider.setBounds(330, 310, 65, 65);
+
+  oscilloscopeComponent.setBounds(450, 290, 420, 120);
+
+  keyboardComponent.setBounds(15, 435, 870, 130);
 }
 
 void SpandanAudioProcessorEditor::drawSerumPanel(juce::Graphics &g, juce::Rectangle<int> bounds, juce::String title)

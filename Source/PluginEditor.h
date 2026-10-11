@@ -65,5 +65,19 @@ private:
 
   void drawSerumPanel(juce::Graphics &g, juce::Rectangle<int> bounds, juce::String title);
 
+  juce::Slider pulseWidthSlider;
+
+  std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> pulseWidthAttachment;
+
+  juce::Slider attackSlider;
+  juce::Slider decaySlider;
+  juce::Slider sustainSlider;
+  juce::Slider releaseSlider;
+
+  std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> attackAttachment;
+  std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> decayAttachment;
+  std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> sustainAttachment;
+  std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> releaseAttachment;
+
   JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(SpandanAudioProcessorEditor)
 };

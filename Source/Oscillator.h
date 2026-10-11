@@ -17,31 +17,38 @@
 class Oscillator
 {
 public:
-    enum class Waveform
-    {
-        Sine = 0,
-        Saw,
-        Square,
-        Triangle
-    };
+  enum class Waveform
+  {
+    Sine = 0,
+    Saw,
+    Square,
+    Triangle,
+    Pulse,
+    Noise
+  };
 
-    Oscillator() = default;
-    ~Oscillator() = default;
+  Oscillator() = default;
+  ~Oscillator() = default;
 
-    void prepareToPlay(double sampleRate) noexcept;
-    void setFrequency(float frequencyInHz) noexcept;
-    void setWaveform(Waveform newWaveform) noexcept;
-    float processSample() noexcept;
-    void resetPhase() noexcept;
+  void prepareToPlay(double sampleRate) noexcept;
+  void setFrequency(float frequencyInHz) noexcept;
+  void setWaveform(Waveform newWaveform) noexcept;
+  void setPulseWidth(float newPulseWidth) noexcept;
+  float processSample() noexcept;
+  void resetPhase() noexcept;
 
 private:
-    double currentSampleRate{44100.0};
-    double targetFrequency{440.0};
+  double currentSampleRate{44100.0};
+  double targetFrequency{440.0};
 
-    double currentPhase{0.0};
-    double phaseIncrement{0.0};
+  double currentPhase{0.0};
+  double phaseIncrement{0.0};
 
-    Waveform currentWaveform{Waveform::Sine};
+  float pulseWidth{0.5f};
 
-    void updatePhaseIncrement() noexcept;
+  Waveform currentWaveform{Waveform::Sine};
+
+  juce::Random random;
+
+  void updatePhaseIncrement() noexcept;
 };
