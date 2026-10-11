@@ -9,9 +9,7 @@
 #pragma once
 
 #include <JuceHeader.h>
-#include "Oscillator.h"
-#include "ADSR.h"
-#include "StateVariableFilter.h"
+#include "SpandanVoice.h"
 #include "AudioFifo.h"
 #include "OscilloscopeComponent.h"
 
@@ -65,10 +63,7 @@ public:
   juce::AudioProcessorValueTreeState apvts;
 
 private:
-  Oscillator osc1;
-  Oscillator osc2;
-  StateVariableFilter svfFilter;
-  ADSR adsrEnvelope;
+  juce::Synthesiser synth;
 
   juce::AudioProcessorValueTreeState::ParameterLayout createParameterLayout();
 

@@ -8,10 +8,10 @@
 
 #include "PluginProcessor.h"
 #include "PluginEditor.h"
+#include "SpandanVoice.h"
 #include <JuceHeader.h>
 #include <cmath>
 #include <algorithm>
-#include "StateVariableFilter.h"
 
 //==============================================================================
 SpandanAudioProcessor::SpandanAudioProcessor()
@@ -85,15 +85,18 @@ int SpandanAudioProcessor::getCurrentProgram()
 
 void SpandanAudioProcessor::setCurrentProgram(int index)
 {
+    juce::ignoreUnused(index);
 }
 
 const juce::String SpandanAudioProcessor::getProgramName(int index)
 {
+    juce::ignoreUnused(index);
     return {};
 }
 
 void SpandanAudioProcessor::changeProgramName(int index, const juce::String &newName)
 {
+    juce::ignoreUnused(index, newName);
 }
 
 //==============================================================================
@@ -101,25 +104,19 @@ void SpandanAudioProcessor::prepareToPlay(double sampleRate, int samplesPerBlock
 {
     juce::ignoreUnused(samplesPerBlock);
 
-    osc1.prepareToPlay(sampleRate);
-    osc2.prepareToPlay(sampleRate);
+    synth.setCurrentPlaybackSampleRate(sampleRate);
+    synth.clearVoices();
+    synth.clearSounds();
 
-    svfFilter.prepareToPlay(sampleRate);
+    synth.addSound(new SpandanSound());
 
-    osc1.setFrequency(440.0f);
-    osc1.setWaveform(Oscillator::Waveform::Sine);
-
-    osc2.setFrequency(440.0f);
-    osc2.setWaveform(Oscillator::Waveform::Sine);
-
-    adsrEnvelope.setSampleRate(sampleRate);
-    adsrEnvelope.setAttackTime(0.05f);
-    adsrEnvelope.setDecayTime(0.2f);
-    adsrEnvelope.setReleaseTime(0.5f);
-    adsrEnvelope.setSustainLevel(0.7f);
-    adsrEnvelope.gate(true);
-
-    adsrEnvelope.reset();
+    constexpr int numVoices = 8;
+    for (int i = 0; i < numVoices; ++i)
+    {
+        auto *voice = new SpandanVoice();
+        voice->prepare(sampleRate);
+        synth.addVoice(voice);
+    }
 }
 
 void SpandanAudioProcessor::releaseResources()
@@ -232,78 +229,40 @@ void SpandanAudioProcessor::processBlock(juce::AudioBuffer<float> &buffer, juce:
     for (auto i = totalNumInputChannels; i < totalNumOutputChannels; ++i)
         buffer.clear(i, 0, buffer.getNumSamples());
 
-    const float detuneCents = *apvts.getRawParameterValue("OSC2_DETUNE");
-    const float mixRatio = *apvts.getRawParameterValue("OSC_MIX");
+    const SynthParameters params{
+        static_cast<int>(*apvts.getRawParameterValue("OSC1_WAVEFORM")),
+        static_cast<int>(*apvts.getRawParameterValue("OSC2_WAVEFORM")),
 
-    const float pulseWidth = *apvts.getRawParameterValue("PULSE_WIDTH");
+        *apvts.getRawParameterValue("OSC2_DETUNE"),
+        *apvts.getRawParameterValue("OSC_MIX"),
+        *apvts.getRawParameterValue("PULSE_WIDTH"),
 
-    const int osc1Wave = static_cast<int>(*apvts.getRawParameterValue("OSC1_WAVEFORM"));
-    const int osc2Wave = static_cast<int>(*apvts.getRawParameterValue("OSC2_WAVEFORM"));
+        static_cast<int>(*apvts.getRawParameterValue("FILTER_TYPE")),
+        *apvts.getRawParameterValue("FILTER_CUTOFF"),
+        *apvts.getRawParameterValue("FILTER_RESONANCE"),
+        *apvts.getRawParameterValue("ATTACK"),
+        *apvts.getRawParameterValue("DECAY"),
+        *apvts.getRawParameterValue("SUSTAIN"),
+        *apvts.getRawParameterValue("RELEASE")};
 
-    osc1.setWaveform(static_cast<Oscillator::Waveform>(osc1Wave));
-    osc2.setWaveform(static_cast<Oscillator::Waveform>(osc2Wave));
-
-    osc1.setPulseWidth(pulseWidth);
-    osc2.setPulseWidth(pulseWidth);
-
-    const int filterTypeVal = static_cast<int>(*apvts.getRawParameterValue("FILTER_TYPE"));
-    const float cutoffHz = *apvts.getRawParameterValue("FILTER_CUTOFF");
-    const float resonanceQ = *apvts.getRawParameterValue("FILTER_RESONANCE");
-
-    svfFilter.setParameters(static_cast<StateVariableFilter::FilterType>(filterTypeVal),
-                            cutoffHz,
-                            resonanceQ);
-
-    const float attack = *apvts.getRawParameterValue("ATTACK");
-    const float decay = *apvts.getRawParameterValue("DECAY");
-    const float sustain = *apvts.getRawParameterValue("SUSTAIN");
-    const float release = *apvts.getRawParameterValue("RELEASE");
-
-    adsrEnvelope.setAttackTime(attack);
-    adsrEnvelope.setDecayTime(decay);
-    adsrEnvelope.setSustainLevel(sustain);
-    adsrEnvelope.setReleaseTime(release);
-
-    for (const auto metadata : midiMessages)
+    for (int i = 0; i < synth.getNumVoices(); ++i)
     {
-        const auto message = metadata.getMessage();
-
-        if (message.isNoteOn())
-        {
-            const int midiNoteNumber = message.getNoteNumber();
-            const float noteHz = juce::MidiMessage::getMidiNoteInHertz(midiNoteNumber);
-            const float detunedFreq = noteHz * std::pow(2.0f, detuneCents / 1200.0f);
-
-            osc1.setFrequency(detunedFreq);
-            osc2.setFrequency(noteHz);
-
-            adsrEnvelope.gate(true);
-        }
-        else if (message.isNoteOff())
-        {
-            adsrEnvelope.gate(false);
-        }
+        if (auto *voice = dynamic_cast<SpandanVoice *>(synth.getVoice(i)))
+            voice->updateParameters(params);
     }
 
     const int numSamples = buffer.getNumSamples();
+    buffer.clear();
+
+    synth.renderNextBlock(buffer, midiMessages, 0, numSamples);
+
+    constexpr float masterGain = 0.25f;
+    buffer.applyGain(masterGain);
 
     for (int sample = 0; sample < numSamples; ++sample)
     {
-        const float envValue = adsrEnvelope.process();
-
-        float osc1Sample = osc1.processSample();
-        float osc2Sample = osc2.processSample();
-
-        const float mixedSample = ((1.0f - mixRatio) * osc1Sample) + (mixRatio * osc2Sample);
-        const float filteredSample = svfFilter.processSample(mixedSample);
-        const float finalOutput = filteredSample * envValue * 0.15f;
-
-        audioFifo.push({osc1Sample, osc2Sample, finalOutput});
-
-        for (int channel = 0; channel < totalNumOutputChannels; ++channel)
-        {
-            buffer.setSample(channel, sample, finalOutput);
-        }
+        const float masterSample = buffer.getSample(0, sample);
+        audioFifo.push({masterSample, masterSample, masterSample});
     }
 }
 
@@ -321,6 +280,7 @@ juce::AudioProcessorEditor *SpandanAudioProcessor::createEditor()
 //==============================================================================
 void SpandanAudioProcessor::getStateInformation(juce::MemoryBlock &destData)
 {
+    juce::ignoreUnused(destData);
     // You should use this method to store your parameters in the memory block.
     // You could do that either as raw data, or use the XML or ValueTree classes
     // as intermediaries to make it easy to save and load complex data.
@@ -328,6 +288,7 @@ void SpandanAudioProcessor::getStateInformation(juce::MemoryBlock &destData)
 
 void SpandanAudioProcessor::setStateInformation(const void *data, int sizeInBytes)
 {
+    juce::ignoreUnused(data, sizeInBytes);
     // You should use this method to restore your parameters from this memory block,
     // whose contents will have been created by the getStateInformation() call.
 }
