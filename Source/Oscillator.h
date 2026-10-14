@@ -34,7 +34,7 @@ public:
   void setFrequency(float frequencyInHz) noexcept;
   void setWaveform(Waveform newWaveform) noexcept;
   void setPulseWidth(float newPulseWidth) noexcept;
-  float processSample() noexcept;
+  float processSample(float phaseModulation = 0.0f) noexcept;
   void resetPhase() noexcept;
 
 private:

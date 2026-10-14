@@ -79,5 +79,8 @@ private:
   std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> sustainAttachment;
   std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> releaseAttachment;
 
+  juce::Slider fmSlider;
+  std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> fmAttachment;
+
   JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(SpandanAudioProcessorEditor)
 };

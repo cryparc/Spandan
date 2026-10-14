@@ -213,6 +213,12 @@ juce::AudioProcessorValueTreeState::ParameterLayout SpandanAudioProcessor::creat
         "Release",
         juce::NormalisableRange<float>(0.001f, 5.0f, 0.001f), 0.3f));
 
+    params.push_back(std::make_unique<juce::AudioParameterFloat>(
+        juce::ParameterID{"FM_AMOUNT", 1},
+        "FM Amount",
+        juce::NormalisableRange<float>(0.0f, 5.0f, 0.01f),
+        0.0f));
+
     return {params.begin(), params.end()};
 }
 
@@ -236,6 +242,8 @@ void SpandanAudioProcessor::processBlock(juce::AudioBuffer<float> &buffer, juce:
         *apvts.getRawParameterValue("OSC2_DETUNE"),
         *apvts.getRawParameterValue("OSC_MIX"),
         *apvts.getRawParameterValue("PULSE_WIDTH"),
+
+        *apvts.getRawParameterValue("FM_AMOUNT"),
 
         static_cast<int>(*apvts.getRawParameterValue("FILTER_TYPE")),
         *apvts.getRawParameterValue("FILTER_CUTOFF"),

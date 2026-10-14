@@ -22,6 +22,7 @@ struct SynthParameters
   float osc2Detune{0.0f};
   float oscMix{0.5f};
   float pulseWidth{0.5f};
+  float fmAmount{0.0f};
   int filterType{0};
   float filterCutoff{1000.0f};
   float filterResonance{0.707f};

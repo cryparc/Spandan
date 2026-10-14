@@ -50,30 +50,38 @@ void Oscillator::updatePhaseIncrement() noexcept
         phaseIncrement = targetFrequency / currentSampleRate;
 }
 
-float Oscillator::processSample() noexcept
+float Oscillator::processSample(float phaseModulation) noexcept
 {
+    double readPhase = currentPhase + static_cast<double>(phaseModulation);
+    if (readPhase >= 1.0 || readPhase < 0.0)
+    {
+        readPhase = std::fmod(readPhase, 1.0);
+        if (readPhase < 0.0)
+            readPhase += 1.0;
+    }
+
     double raw = 0.0;
 
     switch (currentWaveform)
     {
     case Waveform::Sine:
-        raw = std::sin(juce::MathConstants<double>::twoPi * currentPhase);
+        raw = std::sin(juce::MathConstants<double>::twoPi * readPhase);
         break;
 
     case Waveform::Saw:
-        raw = (2.0 * currentPhase) - 1.0;
+        raw = (2.0 * readPhase) - 1.0;
         break;
 
     case Waveform::Square:
-        raw = (currentPhase < 0.5) ? 1.0 : -1.0;
+        raw = (readPhase < 0.5) ? 1.0 : -1.0;
         break;
 
     case Waveform::Triangle:
-        raw = 2.0 * std::abs(2.0 * currentPhase - 1.0) - 1.0;
+        raw = 2.0 * std::abs(2.0 * readPhase - 1.0) - 1.0;
         break;
 
     case Waveform::Pulse:
-        raw = (currentPhase < pulseWidth) ? 1.0 : -1.0;
+        raw = (readPhase < pulseWidth) ? 1.0 : -1.0;
         break;
 
     case Waveform::Noise:

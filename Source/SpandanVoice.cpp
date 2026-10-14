@@ -71,6 +71,7 @@ void SpandanVoice::renderNextBlock(juce::AudioBuffer<float> &outputBuffer, int s
 {
   if (!isVoiceActive())
     return;
+
   const float detunedFreq = static_cast<float>(currentNoteHz * std::pow(2.0, currentParams.osc2Detune / 1200.0));
   osc1.setFrequency(currentNoteHz);
   osc2.setFrequency(detunedFreq);
