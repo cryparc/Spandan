@@ -12,7 +12,7 @@
             "cwd": "${workspaceFolder}", 
             "environment": [], 
             "console": "integratedTerminal", 
-            "preLaunchTask": "Build SPANDAN (Standalone)" 
+            "preLaunchTask": "Build SPANDAN (Debug)" 
         }, 
         
         { 
