@@ -11,6 +11,7 @@
 #include <JuceHeader.h>
 #include "PluginProcessor.h"
 #include "OscilloscopeComponent.h"
+#include "CyberJungleLookAndFeel.h"
 
 //==============================================================================
 /**
@@ -31,43 +32,34 @@ private:
   SpandanAudioProcessor &audioProcessor;
 
   ADSR adsrEnvelope;
-
   OscilloscopeComponent oscilloscopeComponent;
+  CyberJungleLookAndFeel cyberJungleLookAndFeel;
 
   juce::MidiKeyboardComponent keyboardComponent{audioProcessor.keyboardState, juce::MidiKeyboardComponent::horizontalKeyboard};
 
   juce::ComboBox osc1WaveformSelector;
   juce::ComboBox osc2WaveformSelector;
-
-  juce::ComboBox waveformSelector;
-  std::unique_ptr<juce::AudioProcessorValueTreeState::ComboBoxAttachment> waveformAttachment;
-
-  juce::Slider osc2DetuneSlider;
-  juce::Label osc2DetuneLabel;
-
-  juce::Slider oscMixSlider;
+  juce::ComboBox filterTypeSelector;
 
   std::unique_ptr<juce::AudioProcessorValueTreeState::ComboBoxAttachment> osc1WaveAttachment;
   std::unique_ptr<juce::AudioProcessorValueTreeState::ComboBoxAttachment> osc2WaveAttachment;
+  std::unique_ptr<juce::AudioProcessorValueTreeState::ComboBoxAttachment> filterTypeAttachment;
 
+  juce::Slider pulseWidthSlider;
+  juce::Slider fmSlider;
+  juce::Slider osc2DetuneSlider;
+  juce::Slider oscMixSlider;
+
+  std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> pulseWidthAttachment;
+  std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> fmAttachment;
   std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> osc2DetuneAttachment;
+  std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> oscMixAttachment;
 
-  // FILTER UI COMPONENTS
-  juce::ComboBox filterTypeSelector;
   juce::Slider filterCutoffSlider;
   juce::Slider filterResonanceSlider;
 
-  // Attachments
-  std::unique_ptr<juce::AudioProcessorValueTreeState::ComboBoxAttachment> filterTypeAttachment;
   std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> filterCutoffAttachment;
   std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> filterResonanceAttachment;
-  std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> oscMixAttachment;
-
-  void drawSerumPanel(juce::Graphics &g, juce::Rectangle<int> bounds, juce::String title);
-
-  juce::Slider pulseWidthSlider;
-
-  std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> pulseWidthAttachment;
 
   juce::Slider attackSlider;
   juce::Slider decaySlider;
@@ -79,8 +71,8 @@ private:
   std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> sustainAttachment;
   std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> releaseAttachment;
 
-  juce::Slider fmSlider;
-  std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> fmAttachment;
+  void drawCyberPanel(juce::Graphics &g, juce::Rectangle<int> bounds, const juce::String &title);
+  void drawCyberJungleArt(juce::Graphics &g);
 
   JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(SpandanAudioProcessorEditor)
 };

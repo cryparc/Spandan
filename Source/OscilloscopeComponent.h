@@ -42,9 +42,12 @@ public:
 
   void paint(juce::Graphics &g) override
   {
-    g.fillAll(juce::Colour(0xff121214));
-    g.setColour(juce::Colours::darkgrey.withAlpha(0.4f));
+    g.fillAll(juce::Colour(0xffe8f5ec));
+
+    g.setColour(juce::Colour(0xff2e8b57));
     g.drawRect(getLocalBounds(), 1);
+
+    g.setColour(juce::Colour(0x261e5631));
     g.drawHorizontalLine(getHeight() / 2, 0.0f, static_cast<float>(getWidth()));
 
     size_t triggerIndex = 0;
@@ -73,13 +76,10 @@ public:
 
     const auto width = static_cast<float>(getWidth());
     const auto height = static_cast<float>(getHeight());
-    const auto centerY = height / 2.0f;
+    const auto centerY = height * 0.5f;
 
     const auto numPointsToDraw = std::min<size_t>(256, static_cast<size_t>(getWidth()));
-    if (numPointsToDraw == 0)
-      return;
-
-    const float xInc = width / static_cast<float>(numPointsToDraw);
+    const auto xInc = width / static_cast<float>(numPointsToDraw);
 
     juce::Path osc1Path;
     juce::Path osc2Path;
@@ -109,11 +109,13 @@ public:
       }
     }
 
-    g.setColour(juce::Colour(0x60ffd700));
+    g.setColour(juce::Colour(0x4db8860b));
     g.strokePath(osc1Path, juce::PathStrokeType(1.0f));
-    g.setColour(juce::Colour(0x60ff69b4));
+
+    g.setColour(juce::Colour(0x4d8b4513));
     g.strokePath(osc2Path, juce::PathStrokeType(1.0f));
-    g.setColour(juce::Colour(0xff00e5ff));
+
+    g.setColour(juce::Colour(0xff2e8b57));
     g.strokePath(masterPath, juce::PathStrokeType(2.0f));
   }
 

@@ -17,82 +17,58 @@ SpandanAudioProcessorEditor::SpandanAudioProcessorEditor(SpandanAudioProcessor &
       keyboardComponent(p.keyboardState, juce::MidiKeyboardComponent::horizontalKeyboard)
 
 {
+
+    setLookAndFeel(&cyberJungleLookAndFeel);
+    setSize(920, 640);
+
     addAndMakeVisible(keyboardComponent);
     addAndMakeVisible(oscilloscopeComponent);
 
-    setSize(900, 580);
-
-    addAndMakeVisible(osc1WaveformSelector);
-    addAndMakeVisible(osc2WaveformSelector);
-
     osc1WaveformSelector.addItemList({"Sine", "Saw", "Square", "Triangle", "Pulse", "Noise"}, 1);
     addAndMakeVisible(osc1WaveformSelector);
-
     osc1WaveAttachment = std::make_unique<juce::AudioProcessorValueTreeState::ComboBoxAttachment>(
         audioProcessor.apvts, "OSC1_WAVEFORM", osc1WaveformSelector);
 
     osc2WaveformSelector.addItemList({"Sine", "Saw", "Square", "Triangle", "Pulse", "Noise"}, 1);
     addAndMakeVisible(osc2WaveformSelector);
-
     osc2WaveAttachment = std::make_unique<juce::AudioProcessorValueTreeState::ComboBoxAttachment>(
         audioProcessor.apvts, "OSC2_WAVEFORM", osc2WaveformSelector);
 
-    osc2DetuneAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(
-        audioProcessor.apvts, "OSC2_DETUNE", osc2DetuneSlider);
-
-    osc2DetuneLabel.setText("OSC 2 Detune (Cents)", juce::dontSendNotification);
-    osc2DetuneLabel.attachToComponent(&osc2DetuneSlider, false);
-    addAndMakeVisible(osc2DetuneLabel);
-
-    waveformSelector.addItemList(juce::StringArray{"Sine", "Sawtooth", "Square", "Triangle", "Pulse", "Noise"}, 1);
-    addAndMakeVisible(waveformSelector);
-
-    waveformAttachment = std::make_unique<juce::AudioProcessorValueTreeState::ComboBoxAttachment>(
-        audioProcessor.apvts, "WAVEFORM", waveformSelector);
-
-    oscMixSlider.setSliderStyle(juce::Slider::RotaryHorizontalVerticalDrag);
-    oscMixSlider.setTextBoxStyle(juce::Slider::TextBoxBelow, false, 50, 18);
-
-    oscMixSlider.setRange(0.0, 1.0, 0.01);
-    addAndMakeVisible(oscMixSlider);
-    oscMixAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(
-        audioProcessor.apvts, "OSC_MIX", oscMixSlider);
-
-    pulseWidthSlider.setSliderStyle(juce::Slider::RotaryHorizontalVerticalDrag);
-    pulseWidthSlider.setTextBoxStyle(juce::Slider::TextBoxBelow, false, 50, 18);
-    addAndMakeVisible(pulseWidthSlider);
-    pulseWidthAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(
-        audioProcessor.apvts, "PULSE_WIDTH", pulseWidthSlider);
-
-    filterTypeSelector.addItemList(juce::StringArray{"Low-Pass", "High-Pass", "Band-Pass"}, 1);
+    filterTypeSelector.addItemList({"Low-Pass", "High-Pass", "Band-Pass"}, 1);
     addAndMakeVisible(filterTypeSelector);
     filterTypeAttachment = std::make_unique<juce::AudioProcessorValueTreeState::ComboBoxAttachment>(
         audioProcessor.apvts, "FILTER_TYPE", filterTypeSelector);
 
-    filterCutoffSlider.setSliderStyle(juce::Slider::RotaryHorizontalVerticalDrag);
-    filterCutoffSlider.setTextBoxStyle(juce::Slider::TextBoxBelow, false, 60, 20);
-    addAndMakeVisible(filterCutoffSlider);
-    filterCutoffAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(
-        audioProcessor.apvts, "FILTER_CUTOFF", filterCutoffSlider);
+    for (auto *s : {&pulseWidthSlider, &fmSlider, &osc2DetuneSlider, &oscMixSlider, &filterCutoffSlider, &filterResonanceSlider, &attackSlider, &decaySlider, &sustainSlider, &releaseSlider})
+    {
+        s->setLookAndFeel(&cyberJungleLookAndFeel);
+        s->setSliderStyle(juce::Slider::RotaryHorizontalVerticalDrag);
 
-    filterResonanceSlider.setSliderStyle(juce::Slider::RotaryHorizontalVerticalDrag);
-    filterResonanceSlider.setTextBoxStyle(juce::Slider::TextBoxBelow, false, 60, 20);
-    addAndMakeVisible(filterResonanceSlider);
-    filterResonanceAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(
-        audioProcessor.apvts, "FILTER_RESONANCE", filterResonanceSlider);
+        s->setColour(juce::Slider::textBoxTextColourId, juce::Colour(0xff1e5631));
+        s->setColour(juce::Slider::textBoxBackgroundColourId, juce::Colour(0xffe2f5e8));
+        s->setColour(juce::Slider::textBoxOutlineColourId, juce::Colour(0x662e8b57));
 
-    fmSlider.setSliderStyle(juce::Slider::RotaryHorizontalVerticalDrag);
-    fmSlider.setTextBoxStyle(juce::Slider::TextBoxBelow, false, 50, 18);
-    addAndMakeVisible(fmSlider);
+        s->setTextBoxStyle(juce::Slider::TextBoxBelow, false, 54, 18);
+        addAndMakeVisible(*s);
+    }
+
+    pulseWidthAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(
+        audioProcessor.apvts, "PULSE_WIDTH", pulseWidthSlider);
+
     fmAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(
         audioProcessor.apvts, "FM_AMOUNT", fmSlider);
 
-    for (auto *slider : {&attackSlider, &decaySlider, &sustainSlider, &releaseSlider})
-    {
-        slider->setSliderStyle(juce::Slider::RotaryHorizontalVerticalDrag);
-        slider->setTextBoxStyle(juce::Slider::TextBoxBelow, false, 50, 18);
-        addAndMakeVisible(*slider);
-    }
+    osc2DetuneAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(
+        audioProcessor.apvts, "OSC2_DETUNE", osc2DetuneSlider);
+
+    oscMixAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(
+        audioProcessor.apvts, "OSC_MIX", oscMixSlider);
+
+    filterCutoffAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(
+        audioProcessor.apvts, "FILTER_CUTOFF", filterCutoffSlider);
+
+    filterResonanceAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(
+        audioProcessor.apvts, "FILTER_RESONANCE", filterResonanceSlider);
 
     attackAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(
         audioProcessor.apvts, "ATTACK", attackSlider);
@@ -104,64 +80,142 @@ SpandanAudioProcessorEditor::SpandanAudioProcessorEditor(SpandanAudioProcessor &
         audioProcessor.apvts, "RELEASE", releaseSlider);
 }
 
+//==============================================================================
 SpandanAudioProcessorEditor::~SpandanAudioProcessorEditor()
 {
+    for (auto *s : {&pulseWidthSlider, &fmSlider, &osc2DetuneSlider, &oscMixSlider, &filterCutoffSlider, &filterResonanceSlider, &attackSlider, &decaySlider, &sustainSlider, &releaseSlider})
+    {
+        s->setLookAndFeel(nullptr);
+    }
+
+    setLookAndFeel(nullptr);
+}
+
+//==============================================================================
+void SpandanAudioProcessorEditor::drawCyberJungleArt(juce::Graphics &g)
+{
+    const auto w = static_cast<float>(getWidth());
+
+    juce::Path borderVine;
+    borderVine.startNewSubPath(0.0f, 15.0f);
+    borderVine.cubicTo(60.0f, 35.0f, 140.0f, 5.0f, 220.0f, 20.0f);
+    borderVine.cubicTo(300.0f, 35.0f, w - 180.0f, 5.0f, w, 22.0f);
+    g.setColour(juce::Colour(0x1f2e8b57));
+    g.strokePath(borderVine, juce::PathStrokeType(3.0f));
+
+    juce::Path cornerFernTopLeft;
+    cornerFernTopLeft.startNewSubPath(0.0f, 0.0f);
+    cornerFernTopLeft.quadraticTo(45.0f, 15.0f, 70.0f, 55.0f);
+    cornerFernTopLeft.quadraticTo(25.0f, 40.0f, 0.0f, 65.0f);
+    cornerFernTopLeft.closeSubPath();
+    g.setColour(juce::Colour(0x142e8b57));
+    g.fillPath(cornerFernTopLeft);
+
+    juce::Path cornerFernTopRight;
+    cornerFernTopRight.startNewSubPath(w, 0.0f);
+    cornerFernTopRight.quadraticTo(w - 45.0f, 15.0f, w - 70.0f, 55.0f);
+    cornerFernTopRight.quadraticTo(w - 25.0f, 40.0f, w, 65.0f);
+    cornerFernTopRight.closeSubPath();
+    g.fillPath(cornerFernTopRight);
+
+    g.setColour(juce::Colour(0x1ab8860b));
+    g.fillEllipse(8.0f, 8.0f, 18.0f, 18.0f);
+    g.fillEllipse(w - 26.0f, 8.0f, 18.0f, 18.0f);
+}
+
+//==============================================================================
+void SpandanAudioProcessorEditor::drawCyberPanel(juce::Graphics &g, juce::Rectangle<int> bounds, const juce::String &title)
+{
+
+    auto fBounds = bounds.toFloat();
+
+    g.setColour(juce::Colour(0xeeffffff));
+    g.fillRoundedRectangle(fBounds, 6.0f);
+
+    g.setColour(juce::Colour(0xff2e8b57));
+    g.drawRoundedRectangle(fBounds, 6.0f, 1.5f);
+
+    juce::Path headerBar;
+    headerBar.addRoundedRectangle(fBounds.getX(), fBounds.getY(), fBounds.getWidth(), 24.0f, 6.0f, 6.0f, false, false, false, false);
+    g.setColour(juce::Colour(0x142e8b57));
+    g.fillPath(headerBar);
+
+    g.setColour(juce::Colour(0xffb8860b));
+    g.drawHorizontalLine(bounds.getY() + 24, static_cast<float>(bounds.getX()), static_cast<float>(bounds.getRight()));
+
+    g.setColour(juce::Colour(0xff1e5631));
+    g.setFont(juce::FontOptions(13.0f, juce::Font::bold));
+    g.drawText(title, bounds.getX() + 10, bounds.getY() + 3, bounds.getWidth() - 20, 18, juce::Justification::left);
 }
 
 //==============================================================================
 void SpandanAudioProcessorEditor::paint(juce::Graphics &g)
 {
-    g.fillAll(getLookAndFeel().findColour(juce::ResizableWindow::backgroundColourId));
+    g.fillAll(juce::Colour(0xfff0fdf4));
 
-    g.setColour(juce::Colours::white);
-    g.setFont(juce::FontOptions(15.0f));
-    g.drawText("SPANDAN", 20, 20, 300, 30, juce::Justification::left);
+    drawCyberJungleArt(g);
 
-    drawSerumPanel(g, juce::Rectangle<int>(15, 15, 275, 230), "OSC A");
-    drawSerumPanel(g, juce::Rectangle<int>(300, 15, 275, 230), "OSC B");
+    const juce::String appTitle = juce::CharPointer_UTF8("SPANDAN (\xE0\xA4\xB8\xE0\xA5\x8D\xE0\xA4\xAA\xE0\xA4\x82\xE0\xA4\xA6\xE0\xA4\xA8)");
 
-    drawSerumPanel(g, juce::Rectangle<int>(585, 15, 300, 230), "FILTER");
+    g.setFont(juce::FontOptions(24.0f, juce::Font::bold));
 
-    drawSerumPanel(g, juce::Rectangle<int>(15, 255, 410, 170), "AMP ENVELOPE (ADSR)");
+    g.setColour(juce::Colour(0x402e8b57));
+    g.drawText(appTitle, 0, 10, getWidth(), 28, juce::Justification::centred);
+    g.setColour(juce::Colour(0xff1e5631));
+    g.drawText(appTitle, 0, 8, getWidth(), 28, juce::Justification::centred);
 
-    drawSerumPanel(g, juce::Rectangle<int>(435, 255, 450, 170), "MASTER OSCILLOSCOPE");
+    g.setFont(juce::FontOptions(12.0f, juce::Font::plain));
+    g.setColour(juce::Colour(0xff8b4513));
+    g.drawText("ADVANCED REAL-TIME POLYPHONIC SYNTHESIZER", 0, 34, getWidth(), 16, juce::Justification::centred);
+
+    g.setFont(juce::FontOptions(11.0f, juce::Font::italic));
+    g.setColour(juce::Colour(0xff1e5631));
+    g.drawText("By Prashant Singh & Parth Srivastava", 0, 49, getWidth(), 15, juce::Justification::centred);
+
+    drawCyberPanel(g, juce::Rectangle<int>(15, 75, 280, 205), "OSCILLATOR 1");
+    drawCyberPanel(g, juce::Rectangle<int>(310, 75, 280, 205), "OSCILLATOR 2");
+    drawCyberPanel(g, juce::Rectangle<int>(605, 75, 300, 205), "FILTER ENGINE");
+
+    drawCyberPanel(g, juce::Rectangle<int>(15, 290, 420, 200), "AMP ENVELOPE (ADSR)");
+    drawCyberPanel(g, juce::Rectangle<int>(445, 290, 460, 200), "LIVE TIME-DOMAIN MONITOR");
+
+    g.setColour(juce::Colour(0xff8b4513));
+    g.setFont(juce::FontOptions(11.0f, juce::Font::bold));
+
+    g.drawText("PULSE WIDTH", 40, 150, 75, 14, juce::Justification::centred);
+    g.drawText("FM DEPTH", 175, 150, 75, 14, juce::Justification::centred);
+
+    g.drawText("DETUNE", 335, 150, 75, 14, juce::Justification::centred);
+    g.drawText("MIX RATIO", 470, 150, 75, 14, juce::Justification::centred);
+
+    g.drawText("CUTOFF", 640, 150, 75, 14, juce::Justification::centred);
+    g.drawText("RESONANCE", 785, 150, 75, 14, juce::Justification::centred);
+
+    g.drawText("ATTACK", 30, 335, 75, 14, juce::Justification::centred);
+    g.drawText("DECAY", 125, 335, 75, 14, juce::Justification::centred);
+    g.drawText("SUSTAIN", 220, 335, 75, 14, juce::Justification::centred);
+    g.drawText("RELEASE", 315, 335, 75, 14, juce::Justification::centred);
 }
 
 void SpandanAudioProcessorEditor::resized()
 {
-    osc1WaveformSelector.setBounds(30, 45, 245, 28);
-    pulseWidthSlider.setBounds(50, 130, 65, 65);
-    fmSlider.setBounds(170, 130, 65, 65);
+    osc1WaveformSelector.setBounds(35, 110, 240, 26);
+    pulseWidthSlider.setBounds(40, 168, 75, 80);
+    fmSlider.setBounds(175, 168, 75, 80);
 
-    osc2WaveformSelector.setBounds(315, 45, 245, 28);
-    osc2DetuneSlider.setBounds(330, 130, 65, 65);
+    osc2WaveformSelector.setBounds(330, 110, 240, 26);
+    osc2DetuneSlider.setBounds(335, 168, 75, 85);
+    oscMixSlider.setBounds(470, 168, 75, 80);
 
-    oscMixSlider.setBounds(480, 130, 65, 65);
+    filterTypeSelector.setBounds(625, 110, 260, 26);
+    filterCutoffSlider.setBounds(640, 168, 75, 80);
+    filterResonanceSlider.setBounds(785, 168, 75, 80);
 
-    filterTypeSelector.setBounds(600, 45, 270, 28);
-    filterCutoffSlider.setBounds(620, 130, 65, 65);
-    filterResonanceSlider.setBounds(770, 130, 65, 65);
+    attackSlider.setBounds(30, 355, 75, 80);
+    decaySlider.setBounds(125, 355, 75, 80);
+    sustainSlider.setBounds(220, 355, 75, 80);
+    releaseSlider.setBounds(315, 355, 75, 80);
 
-    attackSlider.setBounds(30, 310, 65, 65);
-    decaySlider.setBounds(130, 310, 65, 65);
-    sustainSlider.setBounds(230, 310, 65, 65);
-    releaseSlider.setBounds(330, 310, 65, 65);
-
-    oscilloscopeComponent.setBounds(450, 290, 420, 120);
-
-    keyboardComponent.setBounds(15, 435, 870, 130);
-}
-
-void SpandanAudioProcessorEditor::drawSerumPanel(juce::Graphics &g, juce::Rectangle<int> bounds, juce::String title)
-{
-    g.setColour(juce::Colour(0xff18181c));
-    g.fillRoundedRectangle(bounds.toFloat(), 6.0f);
-
-    g.setColour(juce::Colour(0xff2a2a30));
-    g.drawRoundedRectangle(bounds.toFloat(), 6.0f, 1.5f);
-
-    g.setColour(juce::Colour(0xff00e5ff));
-    g.setFont(juce::FontOptions(14.0f, juce::Font::bold));
-
-    g.drawText(title, bounds.getX() + 12, bounds.getY() + 6, bounds.getWidth() - 24, 20, juce::Justification::left);
+    oscilloscopeComponent.setBounds(460, 325, 430, 150);
+    keyboardComponent.setBounds(15, 500, 890, 125);
 }

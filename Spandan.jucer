@@ -24,6 +24,8 @@
       <FILE id="gaUbup" name="SpandanVoice.cpp" compile="1" resource="0"
             file="Source/SpandanVoice.cpp"/>
       <FILE id="VTHvIw" name="AudioFifo.h" compile="0" resource="0" file="Source/AudioFifo.h"/>
+      <FILE id="bz2EDz" name="CyberJungleLookAndFeel.h" compile="0" resource="0"
+            file="Source/CyberJungleLookAndFeel.h"/>
       <FILE id="X8UTKU" name="SpandanVoice.h" compile="0" resource="0" file="Source/SpandanVoice.h"/>
     </GROUP>
   </MAINGROUP>
