@@ -3,7 +3,8 @@
 <JUCERPROJECT id="VKzsgT" name="Spandan" projectType="audioplug" useAppConfig="0"
               addUsingNamespaceToJuceHeader="0" jucerFormatVersion="1" companyName="Cryparc"
               bundleIdentifier="com.cryparc.spandan" companyWebsite="https://www.linkedin.com/in/cryparc"
-              pluginCharacteristicsValue="pluginIsSynth,pluginWantsMidiIn">
+              pluginCharacteristicsValue="pluginIsSynth,pluginWantsMidiIn"
+              pluginFormats="buildAU,buildAUv3,buildStandalone,buildVST3">
   <MAINGROUP id="VBkeDM" name="Spandan">
     <GROUP id="{F20AFA3B-1A14-6B11-0BA0-1650B659C76B}" name="Source">
       <FILE id="awJSWy" name="StateVariableFilter.h" compile="0" resource="0"
