@@ -24,11 +24,11 @@ Welcome to the official documentation and development blog for **Project SPANDAN
 * 🎹 **[Chapter 4: The Symphony of Concurrency – Polyphonic Voice Allocation &amp; FM Synthesis](Chapter_4_The_Symphony_Of_Concurrency.md)**
   * *Topics: FM Synthesis Mathematics (Bessel Functions), 0 dBFS Headroom Management, Algorithmic Voice Stealing, and JUCE Voice Thread Safety.*
 
-* 📈 **[Chapter 5: The Optics of Sound – Real-Time Radix-2 FFT & Lock-Free Visual Analytics](spandan-cookbook-chapter-5.md)**
+* 📈 **[Chapter 5: The Optics of Sound – Real-Time Radix-2 FFT & Lock-Free Visual Analytics](Chapter_5_The_Optics_Of_Sound.md)**
   * *Core Topics: Cooley-Tukey Radix-2 FFT ($\mathcal{O}(N \log_2 N)$), Hann Windowing, Decibel & Logarithmic Pixel Mapping, Lock-Free Single-Producer Single-Consumer (SPSC) Ring Buffer.*
   
-  * 🧩 ** [Chapter 6: The Architecture of Dynamic DSP – C++ Polymorphism, Real-Time Constraints, & Lock-Free Object Pools](Chapter_6_The Architechture of Dynamic DSP.md)**
-* *Core Topics: Real-Time Thread Constraints, Vtable Overhead & Cache Locality, Prohibition of Heap Allocations (`new`/`malloc`), Pre-Allocated Fixed-Capacity Object Pools, Lock-Free Dynamic Module Routing.*
+* 🧩 ** [Chapter 6: The Architecture of Dynamic DSP – C++ Polymorphism, Real-Time Constraints, & Lock-Free Object Pools](Chapter_6_The Architechture of Dynamic DSP.md)**
+  * *Core Topics: Real-Time Thread Constraints, Vtable Overhead & Cache Locality, Prohibition of Heap Allocations (`new`/`malloc`), Pre-Allocated Fixed-Capacity Object Pools, Lock-Free Dynamic Module Routing.*
 
 ---
 
