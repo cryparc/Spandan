@@ -26,6 +26,9 @@ Welcome to the official documentation and development blog for **Project SPANDAN
 
 * 📈 **[Chapter 5: The Optics of Sound – Real-Time Radix-2 FFT & Lock-Free Visual Analytics](spandan-cookbook-chapter-5.md)**
   * *Core Topics: Cooley-Tukey Radix-2 FFT ($\mathcal{O}(N \log_2 N)$), Hann Windowing, Decibel & Logarithmic Pixel Mapping, Lock-Free Single-Producer Single-Consumer (SPSC) Ring Buffer.*
+  
+  * 🧩 ** [Chapter 6: The Architecture of Dynamic DSP – C++ Polymorphism, Real-Time Constraints, & Lock-Free Object Pools](Chapter_6_The Architechture of Dynamic DSP.md)**
+* *Core Topics: Real-Time Thread Constraints, Vtable Overhead & Cache Locality, Prohibition of Heap Allocations (`new`/`malloc`), Pre-Allocated Fixed-Capacity Object Pools, Lock-Free Dynamic Module Routing.*
 
 ---
 
