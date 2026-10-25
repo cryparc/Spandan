@@ -33,6 +33,9 @@ Welcome to the official documentation and development blog for **Project SPANDAN
 * 🖥️ **[Chapter 7: The Canvas of Modular Control – Dynamic JUCE Component Architecture, Viewports, & Collapsible Panels](Chapter_7_The Dynamic JUCE Component Architecture.md)**
   * *Core Topics: Scrollable `juce::Viewport` Canvas Layouts, Dynamic Component Allocation via `std::unique_ptr`, Thread-Safe APVTS Parameter Attachments, Modular Component Re-Ordering, Collapsible Panel Height Calculation.*
 
+* ⚛️ **[Chapter 8: The Quantum Canvas – Bandlimited Wavetable Synthesis, Wave Morphing, Preset State Management, and Production VST3/AU/Standalone Deployment](Chapter_8_The Quantum Canvas.md)**
+  * *Core Topics: Bandlimited Wavetable Synthesis, Nyquist Aliasing Mitigation & Lanczos Sigma Factor Correction, 2D Equal-Power Wave Morphing, Asymmetric Phase Distortion, `juce::AudioProcessorValueTreeState` (APVTS) Thread-Safe Preset Management, SIMD Alignment (`alignas(64)`), and Multi-Format Production Deployment (VST3/AU/Standalone via MSVC & LLVM).*
+
 ---
 
 ### 🔬 Advanced & Supplementary DSP Guides
