@@ -50,10 +50,10 @@ In standard desktop software, allocating memory on the system heap using `malloc
 3. **Non-Deterministic Execution Time:** While average allocation times are microsecond-scale, worst-case heap allocation times can spike to tens of milliseconds. In real-time audio, worst-case timing governs system stability.
 
 Therefore, SPANDAN enforces the **4 Golden Rules of Real-Time Audio Programming**:
-* **Rule 1:** Zero dynamic memory allocation (`new`, `malloc`, `free`, `delete`, container resizing) inside the process callback.
-* **Rule 2:** Zero thread-blocking primitives (`std::mutex`, `std::condition_variable`, locks) on the audio thread.
-* **Rule 3:** Strict use of `noexcept` specifiers to guarantee exception-free execution and enable SIMD compiler auto-vectorization.
-* **Rule 4:** All memory allocation occurs asynchronously at "setup time" (`prepareToPlay` / initialization).
+* **Rule 1:** Zero dynamic memory allocation (`new`, `malloc`, `free`, `delete`, container resizing) inside the process callback [6, 129, 136, 168, 193].
+* **Rule 2:** Zero thread-blocking primitives (`std::mutex`, `std::condition_variable`, locks) on the audio thread [193, 322, 325].
+* **Rule 3:** Strict use of `noexcept` specifiers to guarantee exception-free execution and enable SIMD compiler auto-vectorization [141, 193, 331].
+* **Rule 4:** All memory allocation occurs asynchronously at "setup time" (`prepareToPlay` / initialization) [2, 4, 136, 193, 327].
 
 ---
 
@@ -139,8 +139,8 @@ Managing dynamic module routing requires transferring configuration updates from
 
 ### Double-Buffered Graph Routing
 SPANDAN uses a **Double-Buffered Graph Structure**:
-* **Active Execution Graph (`readGraph`):** Read exclusively by the audio callback thread during buffer rendering.
-* **Pending Configuration Graph (`writeGraph`):** Modified asynchronously by the GUI thread when the user re-routes modules.
+* **Active Execution Graph (`readGraph`):** Read exclusively by the audio callback thread during buffer rendering [9, 321, 323].
+* **Pending Configuration Graph (`writeGraph`):** Modified asynchronously by the GUI thread when the user re-routes modules [95, 312, 321].
 
 ```
 [ GUI Thread ] ---> (Modifies Pending Graph) ---> [ Swap Atomic Pointer ]
