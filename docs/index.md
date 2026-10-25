@@ -29,6 +29,9 @@ Welcome to the official documentation and development blog for **Project SPANDAN
   
 * 🧩 **[Chapter 6: The Architecture of Dynamic DSP – C++ Polymorphism, Real-Time Constraints, & Lock-Free Object Pools](Chapter_6_The Architechture of Dynamic DSP.md)**
   * *Core Topics: Real-Time Thread Constraints, Vtable Overhead & Cache Locality, Prohibition of Heap Allocations (`new`/`malloc`), Pre-Allocated Fixed-Capacity Object Pools, Lock-Free Dynamic Module Routing.*
+  
+* 🖥️ **[Chapter 7: The Canvas of Modular Control – Dynamic JUCE Component Architecture, Viewports, & Collapsible Panels](Chapter_7_The Dynamic JUCE Component Architecture.md)**
+  * *Core Topics: Scrollable `juce::Viewport` Canvas Layouts, Dynamic Component Allocation via `std::unique_ptr`, Thread-Safe APVTS Parameter Attachments, Modular Component Re-Ordering, Collapsible Panel Height Calculation.*
 
 ---
 
