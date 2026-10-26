@@ -95,7 +95,7 @@ viewport.setScrollBarsShown(true, false);              // Vertical scrollbar ON,
 viewport.setSingleStepSizes(0, 15);                    // Mouse-wheel scroll step speed
 ```
 
-* **`setViewedComponent(Component* content, bool deleteWhenNoLongerNeeded)`:** Assigns the internal canvas component (`moduleContainer`) to the Viewport [146].
+* **`setViewedComponent(Component* content, bool deleteWhenNoLongerNeeded)`:** Assigns the internal canvas component (`moduleContainer`) to the Viewport.
 * **Canvas Bounds Management:** The `Viewport` automatically clips child components outside its visible bounds. The internal canvas (`moduleContainer`) must explicitly compute its total height based on child modules and call `setSize(viewportWidth, calculatedTotalHeight)`.
 * **Scroll Position Calculation:** When `isCollapsed` or module ordering changes, `moduleContainer` recalculates its height and positions. The Viewport automatically updates scrollbar ranges without resetting the user's scroll offset.
 
@@ -581,21 +581,3 @@ public:
     }
 };
 ```
-
----
-
-## 9. Academic Viva Defense & University Panel Q&A
-
-### Question 1: How does JUCE's Viewport architecture prevent UI distortion during window resizing?
-**Answer:** `juce::Viewport` separates the visible clipping window from the child canvas component (`ModuleContainerComponent`). Instead of stretching or scaling vector controls non-proportionally, the Viewport maintains fixed pixel layouts for child controls while enabling vertical scrolling. The canvas component dynamically recalculates its height based on child module heights, ensuring that knobs, text boxes, and spectrum visualizers retain exact aspect ratios.
-
-### Question 2: Why are smart pointers (`std::unique_ptr`) preferred for dynamic UI components over raw pointers?
-**Answer:** `std::unique_ptr` enforces strict single ownership and RAII memory safety. When a dynamic module is removed from the layout vector or the synthesizer editor is closed, `std::unique_ptr` automatically invokes the module's destructor. This automatically unregisters APVTS parameter attachments and detaches child components from JUCE's internal event dispatch tree, completely eliminating memory leaks, dangling pointers, and double-free exceptions.
-
-### Question 3: How does the UI layout engine handle dynamic height updates when a user minimizes or expands a module?
-**Answer:** Each `ModulePanel` encapsulates a header (35px) and a body container (145px). Clicking the toggle button flips a boolean flag `isCollapsed` and sets body visibility. The module notifies its parent `ModuleContainerComponent` via a std::function callback. The parent container iterates through its module vector, recalculating top coordinates $Y_k = Y_{k-1} + H_{k-1} + \text{padding}$, and updates its canvas size $H_{\text{total}}$. The Viewport then automatically updates its scrollbar range.
-
-### Question 4: How are UI parameter changes on dynamic components transferred to the DSP audio thread without audio dropouts?
-**Answer:** UI controls use `juce::AudioProcessorValueTreeState::SliderAttachment` and `ComboBoxAttachment`. Attachments write UI changes asynchronously into atomic thread-safe float parameters managed by APVTS. The audio thread reads these atomic floats inside `processBlock()` without invoking mutex locks or memory allocations, maintaining $O(1)$ lock-free audio execution.
-
----
