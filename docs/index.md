@@ -27,13 +27,13 @@ Welcome to the official documentation and development blog for **Project SPANDAN
 * 📈 **[Chapter 5: The Optics of Sound – Real-Time Radix-2 FFT & Lock-Free Visual Analytics](Chapter_5_The_Optics_Of_Sound.md)**
   * *Core Topics: Cooley-Tukey Radix-2 FFT ($\mathcal{O}(N \log_2 N)$), Hann Windowing, Decibel & Logarithmic Pixel Mapping, Lock-Free Single-Producer Single-Consumer (SPSC) Ring Buffer.*
   
-* 🧩 **[Chapter 6: The Architecture of Dynamic DSP – C++ Polymorphism, Real-Time Constraints, & Lock-Free Object Pools](Chapter_6_The Architechture of Dynamic DSP.md)**
+* 🧩 **[Chapter 6: The Architecture of Dynamic DSP – C++ Polymorphism, Real-Time Constraints, & Lock-Free Object Pools](Chapter_6_The_Architechture_of_Dynamic_DSP.md)**
   * *Core Topics: Real-Time Thread Constraints, Vtable Overhead & Cache Locality, Prohibition of Heap Allocations (`new`/`malloc`), Pre-Allocated Fixed-Capacity Object Pools, Lock-Free Dynamic Module Routing.*
   
-* 🖥️ **[Chapter 7: The Canvas of Modular Control – Dynamic JUCE Component Architecture, Viewports, & Collapsible Panels](Chapter_7_The Dynamic JUCE Component Architecture.md)**
+* 🖥️ **[Chapter 7: The Canvas of Modular Control – Dynamic JUCE Component Architecture, Viewports, & Collapsible Panels](Chapter_7_The_Dynamic_JUCE_Component_Architecture.md)**
   * *Core Topics: Scrollable `juce::Viewport` Canvas Layouts, Dynamic Component Allocation via `std::unique_ptr`, Thread-Safe APVTS Parameter Attachments, Modular Component Re-Ordering, Collapsible Panel Height Calculation.*
 
-* ⚛️ **[Chapter 8: The Quantum Canvas – Bandlimited Wavetable Synthesis, Wave Morphing, Preset State Management, and Production VST3/AU/Standalone Deployment](Chapter_8_The Quantum Canvas.md)**
+* ⚛️ **[Chapter 8: The Quantum Canvas – Bandlimited Wavetable Synthesis, Wave Morphing, Preset State Management, and Production VST3/AU/Standalone Deployment](Chapter_8_The_Quantum_Canvas.md)**
   * *Core Topics: Bandlimited Wavetable Synthesis, Nyquist Aliasing Mitigation & Lanczos Sigma Factor Correction, 2D Equal-Power Wave Morphing, Asymmetric Phase Distortion, `juce::AudioProcessorValueTreeState` (APVTS) Thread-Safe Preset Management, SIMD Alignment (`alignas(64)`), and Multi-Format Production Deployment (VST3/AU/Standalone via MSVC & LLVM).*
 
 ---
