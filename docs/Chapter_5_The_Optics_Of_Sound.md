@@ -19,43 +19,43 @@ In this chapter, we explore the discrete signal processing mathematics, C++20 lo
 
 A discrete-time audio signal $x[n]$ captured in the time domain represents the amplitude of sound pressure over time. To visualize the individual frequency components (harmonics) comprising the sound, we transform the discrete time signal into the discrete frequency domain using the **Discrete Fourier Transform (DFT)**:
 
-$$X[k] = \sum_{n=0}^{N-1} x[n] \cdot e^{-i rac{2\pi k n}{N}} \quad 	ext{for } k = 0, 1, 2, \dots, N-1$$
+$$X[k] = \sum_{n=0}^{N-1} x[n] \cdot e^{-i \frac{2\pi k n}{N}} \quad \text{for } k = 0, 1, 2, \dots, N-1$$
 
 Where:
 * $N$ = FFT block length (e.g., $N = 2048$ samples).
 * $x[n]$ = Time-domain audio sample at index $n$.
 * $X[k]$ = Complex frequency domain bin value at index $k$.
-* $e^{-i rac{2\pi k n}{N}} = \cos\left(rac{2\pi k n}{N}
-ight) - i \sin\left(rac{2\pi k n}{N}
-ight)$ (Euler's Identity).
+* Euler's Identity:
+$$e^{-i \frac{2\pi k n}{N}} = \cos\left(\frac{2\pi k n}{N}\right) - i \sin\left(\frac{2\pi k n}{N}\right)$$
 
 ### Algorithmic Complexity: Naive DFT vs. Radix-2 FFT
 Direct evaluation of the naive DFT summation requires $N$ complex multiplications and $N$ complex additions for each of the $N$ output bins $X[k]$, resulting in an algorithmic time complexity of $\mathcal{O}(N^2)$:
 
-$$	ext{Operations}_{	ext{DFT}} = N^2$$
+$$	{Operations}_{	{DFT}} = N^2$$
 
 For a standard audio buffer length $N = 2048$, a naive DFT requires $2048^2 = 4,194,304$ complex calculations per frame. Executing over 4 million operations 60 times per second on a single thread would saturate CPU cores and cause severe dropouts.
 
-SPANDAN utilizes the **Cooley-Tukey Radix-2 Fast Fourier Transform (FFT)** algorithm. By recursively decomposing an $N$-point DFT ($N = 2^m$) into two smaller $rac{N}{2}$-point DFTs consisting of even and odd indices (Decimation-in-Time), the computational complexity drops exponentially to $\mathcal{O}(N \log_2 N)$:
+SPANDAN utilizes the **Cooley-Tukey Radix-2 Fast Fourier Transform (FFT)** algorithm. By recursively decomposing an $N$-point DFT ($N = 2^m$) into two smaller $\frac{N}{2}$-point DFTs consisting of even and odd indices (Decimation-in-Time), the computational complexity drops exponentially to $\mathcal{O}(N \log_2 N)$:
 
-$$	ext{Operations}_{	ext{FFT}} = N \log_2 N$$
+$$	{Operations}_{	{FFT}} = N \log_2 N$$
 
-$$	ext{For } N = 2048: \quad 2048 	imes \log_2(2048) = 2048 	imes 11 = 22,528 	ext{ operations}$$
+$$\text{For } N = 2048: \quad 2048 \times \log_2(2048) = 2048 \times 11 = 22,528 \text{ operations}$$
 
+###
 The Radix-2 FFT reduces computation by over **186 times**, enabling real-time 60 FPS spectral analysis on low-power embedded CPUs.
 
 ### Frequency Bin Resolution
-The continuous frequency spectrum from $0 	ext{ Hz}$ to the Nyquist limit ($f_s / 2$) is divided linearly into $rac{N}{2}$ distinct frequency bins. The fundamental frequency width $\Delta f$ represented by each bin $k$ is given by:
+The continuous frequency spectrum from $0 	ext{ Hz}$ to the Nyquist limit ($f_s / 2$) is divided linearly into $\frac{N}{2}$ distinct frequency bins. The fundamental frequency width $\Delta f$ represented by each bin $k$ is given by:
 
-$$\Delta f = rac{f_s}{N}$$
+$$\Delta f = \frac{f_s}{N}$$
 
 For SPANDAN running at a sample rate $f_s = 44,100 	ext{ Hz}$ with an FFT size $N = 2048$:
 
-$$\Delta f = rac{44100}{2048} pprox 21.533 	ext{ Hz per bin}$$
+$$\Delta f = \frac{44100}{2048} \approx 21.533 \text{ Hz per bin}$$
 
-The center frequency $f_k$ associated with bin index $k$ is calculated as:
+### The center frequency $f_k$ associated with bin index $k$ is calculated as:
 
-$$f_k = k \cdot \Delta f = k \cdot rac{f_s}{N}$$
+$$f_k = k \cdot \Delta f = k \cdot \frac{f_s}{N}$$
 
 ---
 
@@ -76,10 +76,9 @@ In the frequency domain, these sharp step-discontinuities act as high-frequency 
 ### The Hann Windowing Function
 To eliminate boundary step-discontinuities, SPANDAN applies a smooth, bell-shaped **Hann (Hanning) Windowing Function** $w[n]$ to the time-domain audio samples prior to computing the FFT:
 
-$$w[n] = 0.5 \left(1 - \cos\left(rac{2\pi n}{N - 1}
-ight)
-ight) = \sin^2\left(rac{\pi n}{N - 1}
-ight) \quad 	ext{for } 0 \le n \le N-1$$
+$$w[n] = 0.5 \left(1 - \cos\left(\frac{2\pi n}{N - 1}\right)\right) = \sin^2\left(\frac{\pi n}{N - 1}\right) \quad \text{for } 0 \le n \le N-1$$
+
+###
 
 ```
 Hann Window Shape w[n]:
@@ -90,42 +89,40 @@ Hann Window Shape w[n]:
             0                    N/2                      N-1
 ```
 
-By multiplying the raw audio buffer $x[n]$ by the window envelope $w[n]$, the signal smoothly approaches $0.0$ at both boundaries ($n = 0$ and $n = N-1$), enforcing continuous periodicity and suppressing spectral leakage sidelobes by over $-31 	ext{ dB}$:
+By multiplying the raw audio buffer $x[n]$ by the window envelope $w[n]$, the signal smoothly approaches $0.0$ at both boundaries ($n = 0$ and $n = N-1$), enforcing continuous periodicity and suppressing spectral leakage sidelobes by over $-31 	{ dB}$:
 
-$$x_{	ext{windowed}}[n] = x[n] \cdot w[n]$$
+$$x_{	{windowed}}[n] = x[n] \cdot w[n]$$
 
 ---
 
 ## 3. Logarithmic Frequency & Decibel Magnitude Scaling
 
-The complex spectrum output $X[k] = 	ext{Re}(X[k]) + i \cdot 	ext{Im}(X[k])$ consists of raw real and imaginary rectangular coordinates.
+The complex spectrum output $X[k] = 	{Re}(X[k]) + i \cdot 	{Im}(X[k])$ consists of raw real and imaginary rectangular coordinates.
 
 ### 1. Complex-to-Polar Magnitude Conversion
 To extract the absolute spectral amplitude $|X[k]|$ for each bin $k$, we compute the Pythagorean distance in the complex plane:
 
-$$|X[k]| = \sqrt{	ext{Re}(X[k])^2 + 	ext{Im}(X[k])^2}$$
+$$|X[k]| = \sqrt{	{Re}(X[k])^2 + 	{Im}(X[k])^2}$$
 
 ### 2. Full-Scale Decibel (dBFS) Normalization
 Human perception of sound volume is logarithmic, defined by the Weber-Fechner law. We convert linear spectral magnitudes $|X[k]|$ into normalized **Decibels Full Scale (dBFS)**:
 
-$$	ext{dBFS}[k] = 20 \log_{10}\left( rac{|X[k]|}{N / 2} 
-ight)$$
+$$	{dBFS}[k] = 20 \log_{10}\left( \frac{|X[k]|}{N / 2}\right)$$
 
-Where $0 	ext{ dBFS}$ represents maximum non-clipping digital amplitude, and quiet signals range down to a noise floor threshold of $-100 	ext{ dBFS}$.
+Where $0 	{ dBFS}$ represents maximum non-clipping digital amplitude, and quiet signals range down to a noise floor threshold of $-100 	{ dBFS}$.
 
 ### 3. Logarithmic Frequency Pixel Mapping
-Human pitch perception is also logarithmic across octaves. Displaying frequency bins on a linear $X$-axis would waste 90% of screen width on high frequencies ($10 	ext{ kHz} - 20 	ext{ kHz}$) while squishing low musical bass fundamentals ($20 	ext{ Hz} - 500 	ext{ Hz}$) into a few tiny pixels on the left border.
+Human pitch perception is also logarithmic across octaves. Displaying frequency bins on a linear $X$-axis would waste 90% of screen width on high frequencies ($10 	{ kHz} - 20 	{ kHz}$) while squishing low musical bass fundamentals ($20 	{ Hz} - 500 	{ Hz}$) into a few tiny pixels on the left border.
 
-To map frequency $f \in [20 	ext{ Hz}, 20000 	ext{ Hz}]$ to screen pixel $X_{	ext{screen}} \in [0, 	ext{Width}]$, we use a logarithmic transformation:
+To map frequency $f \in [20 	{ Hz}, 20000 	{ Hz}]$ to screen pixel $X_{	{screen}} \in [0, 	{Width}]$, we use a logarithmic transformation:
 
-$$X_{	ext{screen}}(f) = 	ext{Width} \cdot rac{\log_{10}(f / f_{	ext{min}})}{\log_{10}(f_{	ext{max}} / f_{	ext{min}})}$$
+$$X_{	{screen}}(f) = 	{Width} \cdot \frac{\log_{10}(f / f_{	{min}})}{\log_{10}(f_{	{max}} / f_{	{min}})}$$
 
-Where $f_{	ext{min}} = 20 	ext{ Hz}$ and $f_{	ext{max}} = 20,000 	ext{ Hz}$.
+Where $f_{	{min}} = 20 	{ Hz}$ and $f_{	{max}} = 20,000 	{ Hz}$.
 
-Similarly, magnitude $	ext{dB} \in [-100 	ext{ dBFS}, 0 	ext{ dBFS}]$ maps to screen $Y$-pixel height:
+Similarly, magnitude $	{dB} \in [-100 	{ dBFS}, 0 	{ dBFS}]$ maps to screen $Y$-pixel height:
 
-$$Y_{	ext{screen}}(	ext{dB}) = 	ext{Height} \cdot \left( 1.0 - rac{	ext{dB} - 	ext{dB}_{	ext{min}}}{	ext{dB}_{	ext{max}} - 	ext{dB}_{	ext{min}}} 
-ight)$$
+$$Y_{	{screen}}(	{dB}) = 	{Height} \cdot \left( 1.0 - \frac{	{dB} - 	{dB}_{	{min}}}{	{dB}_{	{max}} - 	{dB}_{	{min}}} \right)$$
 
 ---
 
