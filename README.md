@@ -1,5 +1,3 @@
----
-
 # 🎹 SPANDAN (स्पंदन)
 
 **An Advanced Real-Time Polyphonic Software Synthesizer (VST3 / AU / Standalone)**
