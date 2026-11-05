@@ -1,39 +1,33 @@
-{ 
-    "version": "2.0.0", 
-    "tasks": 
-    [ 
-        { 
-            "label": "Build SPANDAN (Debug)", 
-            "type": "process",            
-            "command": "C:\\Program Files (x86)\\Microsoft Visual Studio\\18\\BuildTools\\MSBuild\\Current\\Bin\\MSBuild.exe", 
-
-            "args": 
-            [ 
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Build SPANDAN (Debug)",
+            "type": "process",
+            "command": "C:\\Program Files\\Microsoft Visual Studio\\18\\Community\\MSBuild\\Current\\Bin\\MSBuild.exe",
+            "args": [
                 "D:\\PROJECTS\\JuceProjects\\Spandan\\Builds\\VisualStudio2026\\Spandan.sln",
                 "/p:Configuration=Debug",
                 "/p:Platform=x64",
                 "/m"
-            ], 
-
-            "problemMatcher": "$msCompile" 
+            ],
+            "problemMatcher": "$msCompile"
         },
         {
             "label": "Build SPANDAN (Release)",
             "type": "process",
-            "command": "C:\\Program Files (x86)\\Microsoft Visual Studio\\18\\BuildTools\\MSBuild\\Current\\Bin\\MSBuild.exe",
-            "args":
-            [
+            "command": "C:\\Program Files\\Microsoft Visual Studio\\18\\Community\\MSBuild\\Current\\Bin\\MSBuild.exe",
+            "args": [
                 "D:\\PROJECTS\\JuceProjects\\Spandan\\Builds\\VisualStudio2026\\Spandan.sln",
                 "/p:Configuration=Release",
                 "/p:Platform=x64",
                 "/m"
             ],
-            "group":
-            {
+            "group": {
                 "kind": "build",
                 "isDefault": true
             },
-            "problemMatcher": "$msCompile" 
-        } 
-    ] 
+            "problemMatcher": "$msCompile"
+        }
+    ]
 }
