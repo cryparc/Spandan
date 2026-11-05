@@ -8,7 +8,9 @@ SPANDAN is a deterministic, polyphonic software synthesizer and audio DSP engine
 
 Developed as an undergraduate major project, SPANDAN is designed to demonstrate low-level audio signal processing, continuous-time analog filter modeling, and lock-free thread concurrency within strict real-time audio environments.
 
-`![SPANDAN UI Screenshot](link-to-your-image.png)`
+<p align="center">
+  <img src="docs/Images/spandan-ui.png" alt="SPANDAN synthesizer interface" width="800" />
+</p>
 
 ---
 
