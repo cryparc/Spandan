@@ -65,28 +65,6 @@ cd Spandan
 
 ```
 
----
-
-## 📂 Project Structure Overview
-
-```text
-Spandan/
-├── Source/
-│   ├── Main.cpp                # App entry & wrapper
-│   ├── PluginProcessor.cpp     # Core AudioProcessor & APVTS tree
-│   ├── PluginEditor.cpp        # UI Layout & LookAndFeel integration
-│   ├── SpandanVoice.h          # Polyphonic voice logic
-│   ├── Oscillator.cpp          # NCO & Phase math
-│   ├── StateVariableFilter.h   # ZDF Filter DSP
-│   ├── ADSR.cpp                # IIR Envelope Generator
-│   ├── AudioFifo.h             # Thread-safe ring buffer
-│   └── SpectralAnalyzer.h      # FFT & Visuals
-└── Spandan.jucer               # JUCE Project File
-
-```
-
----
-
 ## 🎓 Academic Context
 
 SPANDAN is developed as a final-year B.Tech Major Project at Ajay Kumar Garg Engineering College (AKGEC).
