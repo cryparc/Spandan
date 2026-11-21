@@ -16,6 +16,8 @@ void Oscillator::prepareToPlay(double sampleRate) noexcept
     currentSampleRate = sampleRate;
     resetPhase();
     updatePhaseIncrement();
+
+    randomEngine.setSeed(12345);
 }
 
 void Oscillator::setFrequency(float frequencyInHz) noexcept
@@ -81,11 +83,11 @@ float Oscillator::processSample(float phaseModulation) noexcept
         break;
 
     case Waveform::Pulse:
-        raw = (readPhase < pulseWidth) ? 1.0 : -1.0;
+        raw = (readPhase < pulseWidth) ? 1.0f : -1.0f;
         break;
 
     case Waveform::Noise:
-        raw = static_cast<double>(random.nextFloat() * 2.0f - 1.0f);
+        raw = randomEngine.nextFloat() * 2.0f - 1.0f;
         break;
     }
 

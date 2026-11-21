@@ -51,4 +51,6 @@ private:
   juce::Random random;
 
   void updatePhaseIncrement() noexcept;
+
+  juce::Random randomEngine;
 };

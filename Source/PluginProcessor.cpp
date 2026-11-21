@@ -153,12 +153,12 @@ juce::AudioProcessorValueTreeState::ParameterLayout SpandanAudioProcessor::creat
     params.push_back(std::make_unique<juce::AudioParameterChoice>(
         juce::ParameterID{"OSC1_WAVEFORM", 1},
         "Oscillator 1 Waveform",
-        juce::StringArray{"Sine", "Saw", "Square", "Triangle"}, 0));
+        juce::StringArray{"Sine", "Saw", "Square", "Triangle", "Pulse", "Noise"}, 0));
 
     params.push_back(std::make_unique<juce::AudioParameterChoice>(
         juce::ParameterID{"OSC2_WAVEFORM", 1},
         "Oscillator 2 Waveform",
-        juce::StringArray{"Sine", "Saw", "Square", "Triangle"}, 0));
+        juce::StringArray{"Sine", "Saw", "Square", "Triangle", "Pulse", "Noise"}, 0));
 
     params.push_back(std::make_unique<juce::AudioParameterFloat>(
         juce::ParameterID{"OSC2_DETUNE", 1},
