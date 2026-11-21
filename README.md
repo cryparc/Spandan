@@ -1,5 +1,3 @@
----
-
 # 🎹 SPANDAN (स्पंदन)
 
 **An Advanced Real-Time Polyphonic Software Synthesizer (VST3 / AU / Standalone)**
@@ -8,9 +6,7 @@ SPANDAN is a deterministic, polyphonic software synthesizer and audio DSP engine
 
 Developed as an undergraduate major project, SPANDAN is designed to demonstrate low-level audio signal processing, continuous-time analog filter modeling, and lock-free thread concurrency within strict real-time audio environments.
 
-<p align="center">
-  <img src="docs/Images/spandan-ui.png" alt="SPANDAN synthesizer interface" width="800" />
-</p>
+![SPANDAN synthesizer interface](https://raw.githubusercontent.com/cryparc/Spandan/main/docs/Images/spandan-ui.png)
 
 ---
 
@@ -68,28 +64,6 @@ cd Spandan
 # 4. Build the target in Release mode (to enable SIMD & DSP optimizations)
 
 ```
-
----
-
-## 📂 Project Structure Overview
-
-```text
-Spandan/
-├── Source/
-│   ├── Main.cpp                # App entry & wrapper
-│   ├── PluginProcessor.cpp     # Core AudioProcessor & APVTS tree
-│   ├── PluginEditor.cpp        # UI Layout & LookAndFeel integration
-│   ├── SpandanVoice.h          # Polyphonic voice logic
-│   ├── Oscillator.cpp          # NCO & Phase math
-│   ├── StateVariableFilter.h   # ZDF Filter DSP
-│   ├── ADSR.cpp                # IIR Envelope Generator
-│   ├── AudioFifo.h             # Thread-safe ring buffer
-│   └── SpectralAnalyzer.h      # FFT & Visuals
-└── Spandan.jucer               # JUCE Project File
-
-```
-
----
 
 ## 🎓 Academic Context
 
